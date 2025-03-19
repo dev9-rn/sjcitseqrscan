@@ -68,6 +68,19 @@ const RootLayout = ({ }: Props) => {
                 }}
             />
 
+            <Stack.Screen
+                name='scan-history-details'
+                options={{
+                    presentation: "modal",
+                    headerBackVisible: false,
+                    // headerShadowVisible: false,
+                    // header: () => (
+                    //     <Header isBackVisible headerTitle='Scanned History' />
+                    // )
+                }}
+
+            />
+
         </Stack>
     )
 }

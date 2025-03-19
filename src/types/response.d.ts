@@ -84,4 +84,18 @@ interface IServerError {
         status: number;
         message: string;
     };
+};
+
+interface IScanHistoryData {
+    created_at: string | null;
+    date_time: string; // ISO date string
+    device_type: string; // Assuming other device types are possible
+    document_id: number | null;
+    document_status: string | null;
+    id: number;
+    pdf_url: string;
+    scan_by: string; // Assuming this is a user ID in string format
+    scan_result: number;
+    scanned_data: string;
+    site_id: number;
 }

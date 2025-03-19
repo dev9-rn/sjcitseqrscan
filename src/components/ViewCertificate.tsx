@@ -26,8 +26,8 @@ import { Separator } from './ui/separator';
 // import { ChevronDown } from '@/lib/icons/ChevronDown';
 
 type Props = {
-    scannedResults: IVerifierCertificate;
-    barcodeData: string | string[];
+    scannedResults: IVerifierCertificate & IScanHistoryData;
+    barcodeData?: string | string[];
 };
 
 const MIN_COLUMN_WIDTHS = [180, 180];
@@ -54,7 +54,7 @@ const ViewCertificate = ({ scannedResults, barcodeData }: Props) => {
                 <CardContent>
                     <Text className='text-base xs:text-lg'>
                         Document ID:{" "}
-                        <Text className='font-semibold'>{scannedResults.serial_no}</Text>
+                        <Text className='font-semibold'>{scannedResults.serial_no || scannedResults.document_id}</Text>
                     </Text>
                     <Text className='text-base xs:text-lg'>
                         Status:{" "}
@@ -73,7 +73,7 @@ const ViewCertificate = ({ scannedResults, barcodeData }: Props) => {
                 </CardContent>
             </Card>
 
-            {scannedResults.verification_type != 1 ? (
+            {scannedResults.verification_type != 1 || scannedResults.document_status ? (
                 <View className='flex-1 my-4'>
                     <Pdf
                         style={{
@@ -82,7 +82,7 @@ const ViewCertificate = ({ scannedResults, barcodeData }: Props) => {
                             height: "100%",
                             backgroundColor: "#FFF"
                         }}
-                        source={{ uri: scannedResults.fileUrl }}
+                        source={{ uri: scannedResults.fileUrl || scannedResults.pdf_url }}
                     />
                 </View>
             ) : (

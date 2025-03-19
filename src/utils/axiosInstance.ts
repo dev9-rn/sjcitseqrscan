@@ -10,7 +10,7 @@ const axiosInstance = axios.create({
         "Content-Type": "multipart/form-data",
         "apikey": API_KEY,
     },
-    timeout: 10000, // Optional: Set a timeout for requests
+    // timeout: 10000, // Optional: Set a timeout for requests
 });
 
 // Request Interceptor: Attach Token Automatically

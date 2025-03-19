@@ -4,8 +4,10 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Text } from '@/components/ui/text'
-import { useForm } from 'react-hook-form'
+import { Controller, FieldValues, SubmitHandler, useForm } from 'react-hook-form'
 import { KeyboardAwareScrollView, KeyboardToolbar } from 'react-native-keyboard-controller';
+import axiosInstance from '@/utils/axiosInstance'
+import { VERIFIER_SIGNUP } from '@/utils/routes'
 
 type Props = {}
 
@@ -33,9 +35,23 @@ const SignUpScreen = ({ }: Props) => {
         }
     });
 
-    const handleUserSignUp = () => {
-        
-    }
+    const handleUserSignUp: SubmitHandler<SignUpForm | FieldValues> = async (formData) => {
+        console.log(formData, "SIGN_UP_FORMDATA");
+
+        const signUpFormData = new FormData();
+
+        signUpFormData.append('type', 'register');
+        signUpFormData.append('registration_type', '0');
+
+        try {
+            const response = await axiosInstance.post(VERIFIER_SIGNUP, signUpFormData);
+
+            console.log(response.data, "SIGN_UP_RES");
+        } catch (error) {
+            console.log(error);
+        };
+    };
+
     return (
         <>
             <View className='flex-1 p-4 bg-white' style={{ paddingBottom: inset.bottom }}>
@@ -56,53 +72,130 @@ const SignUpScreen = ({ }: Props) => {
                                 <Text className='signUpFormText'>
                                     Full Name
                                 </Text>
-                                <Input
-                                    placeholder='Enter your full name'
-                                    className='signUpInputs'
-                                    keyboardType='default'
+                                <Controller
+                                    control={control}
+                                    name='userFullName'
+                                    rules={{ required: true }}
+                                    render={({ field: { onChange, onBlur, value } }) => (
+                                        <Input
+                                            className='signUpInputs focus:signUpInputs_Focused'
+                                            placeholder='Enter your full name'
+                                            keyboardType='default'
+                                            onBlur={onBlur}
+                                            onChangeText={onChange}
+                                            value={value}
+                                        />
+                                    )}
                                 />
+                                {errors.userFullName && <Text>This field is required</Text>}
                             </View>
                             <View>
                                 <Text className='signUpFormText'>
                                     Email Address
                                 </Text>
-                                <Input
-                                    placeholder='Enter your email'
-                                    keyboardType='email-address'
+                                <Controller
+                                    control={control}
+                                    name='userEmail'
+                                    rules={{ required: true }}
+                                    render={({ field: { onChange, onBlur, value } }) => (
+                                        <Input
+                                            autoCapitalize='none'
+                                            className='signUpInputs focus:signUpInputs_Focused'
+                                            placeholder='Enter your email'
+                                            keyboardType='email-address'
+                                            onBlur={onBlur}
+                                            onChangeText={onChange}
+                                            value={value}
+                                        />
+                                    )}
                                 />
                             </View>
                             <View>
                                 <Text className='signUpFormText'>
                                     Phone Number
                                 </Text>
-                                <Input
-                                    placeholder='Enter your phone number'
-                                    keyboardType='phone-pad'
+                                <Controller
+                                    control={control}
+                                    name='userPhone'
+                                    rules={{ required: true }}
+                                    render={({ field: { onChange, onBlur, value } }) => (
+                                        <Input
+                                            className='signUpInputs focus:signUpInputs_Focused'
+                                            placeholder='Enter your phone number'
+                                            keyboardType='phone-pad'
+                                            onBlur={onBlur}
+                                            onChangeText={onChange}
+                                            value={value}
+                                        />
+                                    )}
                                 />
+
                             </View>
                             <View>
                                 <Text className='signUpFormText'>
                                     Username
                                 </Text>
-                                <Input placeholder='Enter your username' />
+                                <Controller
+                                    control={control}
+                                    name='userName'
+                                    rules={{ required: true }}
+                                    render={({ field: { onChange, onBlur, value } }) => (
+                                        <Input
+                                            className='signUpInputs focus:signUpInputs_Focused'
+                                            placeholder='Enter your username'
+                                            onBlur={onBlur}
+                                            onChangeText={onChange}
+                                            value={value}
+                                        />
+                                    )}
+                                />
                             </View>
                             <View>
                                 <Text className='signUpFormText'>
                                     New Password
                                 </Text>
-                                <Input placeholder='Enter your password' />
+                                <Controller
+                                    control={control}
+                                    name='userNewPassword'
+                                    rules={{ required: true }}
+                                    render={({ field: { onChange, onBlur, value } }) => (
+                                        <Input
+                                            className='signUpInputs focus:signUpInputs_Focused'
+                                            placeholder='Enter your password'
+                                            onBlur={onBlur}
+                                            onChangeText={onChange}
+                                            value={value}
+                                        />
+                                    )}
+                                />
                             </View>
                             <View>
                                 <Text className='signUpFormText'>
                                     Confirm Password
                                 </Text>
-                                <Input placeholder='Confirm your password' />
+                                <Controller
+                                    control={control}
+                                    name='userConfirmPassword'
+                                    rules={{ required: true }}
+                                    render={({ field: { onChange, onBlur, value } }) => (
+                                        <Input
+                                            className='signUpInputs focus:signUpInputs_Focused'
+                                            placeholder='Confirm your password'
+                                            onBlur={onBlur}
+                                            onChangeText={onChange}
+                                            value={value}
+                                        />
+                                    )}
+                                />
                             </View>
                         </View>
                     </>
                 </KeyboardAwareScrollView>
-                <View className='mt-auto'>
-                    <Button>
+
+                <View className='mt-auto android:mb-6'>
+                    <Button
+                        onPress={handleSubmit(handleUserSignUp)}
+                    >
                         <Text>Sign Up</Text>
                     </Button>
                 </View>

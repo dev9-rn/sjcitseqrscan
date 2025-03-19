@@ -12,6 +12,7 @@ import axiosInstance from '@/utils/axiosInstance'
 import { INSTITUE_LOGIN, VERIFIER_LOGIN } from '@/utils/routes'
 import useAuth from '@/hooks/useAuth'
 import useUser from '@/hooks/useUser'
+import ForgotPasswordDialog from '@/components/ForgotPasswordDialog'
 
 type Props = {}
 
@@ -32,7 +33,7 @@ const LoginScreen = ({ }: Props) => {
     const [isUserNameFocused, setIsUserNameFocused] = useState<boolean>(false);
     const [isPasswordFocused, setIsPasswordFocused] = useState<boolean>(false);
 
-    const { control, handleSubmit, formState: { errors, isValid } } = useForm<FormData>({
+    const { control, handleSubmit, setError, formState: { errors, isValid, } } = useForm<FormData>({
         mode: "onChange", // Enables real-time validation updates
         defaultValues: {
             userName: '',
@@ -53,6 +54,14 @@ const LoginScreen = ({ }: Props) => {
                 loginBody
             );
             if (!response.data?.success) {
+                setError("userName", {
+                    type: "custom",
+                    message: response.data?.message,
+                })
+                setError("userPass", {
+                    type: "custom",
+                    message: response.data?.message,
+                })
                 setIsUserLoggedIn(false);
                 throw new Error(response.data?.message)
             };
@@ -106,6 +115,9 @@ const LoginScreen = ({ }: Props) => {
                                     </View>
                                 )}
                             />
+
+                            {errors.userName?.type === "required" && <Text className='text-destructive'>Please enter your username</Text>}
+                            {(errors.userName?.type !== "required" && errors.userPass) && <Text className='text-destructive'>{errors.userName?.message}</Text>}
                         </View>
 
                         <View className='gap-2'>
@@ -148,6 +160,9 @@ const LoginScreen = ({ }: Props) => {
                                     </View>
                                 )}
                             />
+
+                            {errors.userPass?.type === "required" && <Text className='text-destructive'>Please enter your password</Text>}
+                            {(errors.userPass?.type !== "required" && errors.userPass) && <Text className='text-destructive'>{errors.userName?.message}</Text>}
                         </View>
                     </View>
 
@@ -166,15 +181,8 @@ const LoginScreen = ({ }: Props) => {
                                     </Text>
                                 </Button>
                             </View>
-                            <Button
-                                variant={"ghost"}
-                                size={"sm"}
-                                className='p-0'
-                            >
-                                <Text className='text-destructive'>
-                                    Forgot password
-                                </Text>
-                            </Button>
+
+                            <ForgotPasswordDialog />
                         </View>
                     )}
                 </View>
