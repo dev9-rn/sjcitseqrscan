@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { Dispatch, useRef } from 'react'
 
 import {
     Dialog,
@@ -12,19 +12,30 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from './ui/button';
 import { Text } from './ui/text';
-import { KeyboardAvoidingView, Platform, View } from 'react-native';
+import { KeyboardAvoidingView, Modal, Platform, TouchableWithoutFeedback, View } from 'react-native';
 import { Controller, FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { Input } from './ui/input';
 import axiosInstance from '@/utils/axiosInstance';
 import { VERIFIER_RESET_PASSWORD } from '@/utils/routes';
+import { X } from '@/libs/icons/X';
+import { KeyboardAwareScrollView, KeyboardController } from 'react-native-keyboard-controller';
+import useGradualAnimation from '@/hooks/useGradualAnimation';
+import { useToast } from 'react-native-toast-notifications';
 
-type Props = {}
+type Props = {
+    isForgotPasswordVisible: boolean;
+    setIsForgotPasswordVisible: Dispatch<React.SetStateAction<boolean>>;
+}
 
 type ResetFormData = {
     userEmail: string;
 }
 
-const ForgotPasswordDialog = ({ }: Props) => {
+const ForgotPasswordDialog = ({ isForgotPasswordVisible, setIsForgotPasswordVisible }: Props) => {
+
+    const { height } = useGradualAnimation();
+
+    const toast = useToast();
 
     const { control, handleSubmit, formState: { errors }, } = useForm<ResetFormData>({
         mode: "onChange", // Enables real-time validation updates
@@ -44,8 +55,13 @@ const ForgotPasswordDialog = ({ }: Props) => {
         passwordChangeFormData.append('user_type', 1)
 
         try {
-            const respoonse = await axiosInstance.post(VERIFIER_RESET_PASSWORD, passwordChangeFormData);
+            const response = await axiosInstance.post(VERIFIER_RESET_PASSWORD, passwordChangeFormData);
 
+            if (response.data.status != 200) {
+
+            };
+
+            toast.show(response.data.message);
         } catch (error) {
             console.log(error, "CATHC_ERROR_PASSWORD_CHANGE");
         }
@@ -64,48 +80,48 @@ const ForgotPasswordDialog = ({ }: Props) => {
                     </Text>
                 </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className='relative' style={{ bottom: height.value && height.value - 220 }}>
                 <DialogHeader>
                     <DialogTitle>Forgot Password?</DialogTitle>
                     <DialogDescription>
                         No worries, we will send you reset instruction
                     </DialogDescription>
                 </DialogHeader>
-                <KeyboardAvoidingView behavior='padding'>
-                    <View>
-                        <Controller
-                            control={control}
-                            name='userEmail'
-                            rules={{
-                                required: true,
-                                pattern: {
-                                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                    message: "Please enter a valid email"
-                                }
-                            }}
-                            render={({ field: { onChange, onBlur, value } }) => (
-                                <Input
-                                    className={`signUpInputs focus:signUpInputs_Focused`}
-                                    autoFocus
-                                    placeholder='Enter your email'
-                                    keyboardType='email-address'
-                                    value={value}
-                                    onBlur={onBlur}
-                                    onChangeText={onChange}
-                                />
-                            )}
-                        />
+                <View>
+                    <Controller
+                        control={control}
+                        name='userEmail'
+                        rules={{
+                            required: true,
+                            pattern: {
+                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                message: "Please enter a valid email"
+                            }
+                        }}
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <Input
+                                className={`signUpInputs focus:signUpInputs_Focused`}
+                                autoFocus
+                                placeholder='Enter your email'
+                                keyboardType='email-address'
+                                value={value}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                            />
+                        )}
+                    />
 
-                        {errors.userEmail?.type === "required" && <Text className='text-destructive'>Please enter your email</Text>}
-                        {(errors.userEmail?.type !== "required" && errors.userEmail) && <Text className='text-destructive'>{errors.userEmail?.message}</Text>}
-                    </View>
-                </KeyboardAvoidingView>
+                    {errors.userEmail?.type === "required" && <Text className='text-destructive'>Please enter your email</Text>}
+                    {(errors.userEmail?.type !== "required" && errors.userEmail) && <Text className='text-destructive'>{errors.userEmail?.message}</Text>}
+                </View>
 
-                <Button
-                    onPress={handleSubmit(handlePasswordChange)}
-                >
-                    <Text>OK</Text>
-                </Button>
+                <DialogClose asChild>
+                    <Button
+                        onPress={handleSubmit(handlePasswordChange)}
+                    >
+                        <Text>OK</Text>
+                    </Button>
+                </DialogClose>
             </DialogContent>
         </Dialog>
     )

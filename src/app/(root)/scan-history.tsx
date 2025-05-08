@@ -1,4 +1,4 @@
-import { View, Platform, TouchableOpacity, FlatList, useWindowDimensions, Alert, ScrollView } from 'react-native'
+import { View, Platform, FlatList, useWindowDimensions, Alert, ScrollView, } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import axiosInstance from '@/utils/axiosInstance'
 import { GET_SCAN_HISTORY } from '@/utils/routes'
@@ -6,11 +6,11 @@ import useUser from '@/hooks/useUser'
 import { Text } from '@/components/ui/text'
 import { Button } from '@/components/ui/button'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { cn } from '@/libs/utils'
-import { FlashList } from '@shopify/flash-list';
-import { formatDateTime } from '@/utils/formatDateTime'
 import { router } from 'expo-router'
+import { Image } from 'expo-image';
+import formatDateTime from '@/utils/formatDateTime'
 
 type Props = {}
 
@@ -29,7 +29,7 @@ const BADGES = [
     },
 ];
 
-const MIN_COLUMN_WIDTHS = [100, 100, 20];
+const MIN_COLUMN_WIDTHS = [140, 100, 10];
 
 const ScanHistoryScreen = ({ }: Props) => {
 
@@ -94,13 +94,9 @@ const ScanHistoryScreen = ({ }: Props) => {
                     All scan history
                 </Text>
 
-                <Text>
+                <Text className='font-semibold text-lg'>
                     Below is the summary for documents
                 </Text>
-            </View>
-
-            <View className='mt-10 gap-4'>
-                <Text className='font-semibold text-lg'>Past scanned documents</Text>
             </View>
 
             <ScrollView horizontal bounces={false} showsHorizontalScrollIndicator={false} scrollEnabled={false}>
@@ -114,7 +110,7 @@ const ScanHistoryScreen = ({ }: Props) => {
                                 <Text className='font-semibold text-center'>Scan Date</Text>
                             </TableHead>
                             <TableHead style={{ width: columnWidths[2] }}>
-                                <Text className='font-semibold text-center'>Platform</Text>
+                                <Text className='font-semibold'>Platform</Text>
                             </TableHead>
                         </TableRow>
                     </TableHeader>
@@ -132,7 +128,7 @@ const ScanHistoryScreen = ({ }: Props) => {
                                     onPress={() => goToCertificateDetails(item)}
                                 >
                                     <TableCell style={{ width: columnWidths[0] }}>
-                                        <Text className='text-center'>{item.document_id}</Text>
+                                        <Text>{item.document_id}</Text>
                                     </TableCell>
                                     <TableCell style={{ width: columnWidths[1] }}>
                                         <Text className='text-center'>
@@ -140,7 +136,15 @@ const ScanHistoryScreen = ({ }: Props) => {
                                         </Text>
                                     </TableCell>
                                     <TableCell style={{ width: columnWidths[2] }}>
-                                        <Text className='uppercase text-center'>{item.device_type}</Text>
+                                        {Platform.OS === "ios" ? (
+                                            <View>
+                                                <Image source={require("@/assets/images/logos/apple-logo.svg")} style={{ height: 20, width: 20 }} contentFit='contain' />
+                                            </View>
+                                        ) : (
+                                            <View>
+                                                <Image source={require("@/assets/images/logos/android-logo.png")} style={{ height: 25, width: 25 }} contentFit='contain' />
+                                            </View>
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             )}

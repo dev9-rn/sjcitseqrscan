@@ -1,4 +1,4 @@
-import { Alert, Dimensions, FlatList, ScrollView, useWindowDimensions, View } from 'react-native'
+import { FlatList, ScrollView, useWindowDimensions, View } from 'react-native'
 import React, { useMemo } from 'react'
 import Pdf from 'react-native-pdf';
 import {
@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/card';
 import { Text } from '@/components/ui/text';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Button } from '@/components/ui/button';
 import {
     Table,
     TableBody,
@@ -23,7 +22,6 @@ import {
 } from '@/components/ui/table';
 import { cn } from '@/libs/utils';
 import { Separator } from './ui/separator';
-// import { ChevronDown } from '@/lib/icons/ChevronDown';
 
 type Props = {
     scannedResults: IVerifierCertificate & IScanHistoryData;
@@ -76,13 +74,17 @@ const ViewCertificate = ({ scannedResults, barcodeData }: Props) => {
             {scannedResults.verification_type != 1 || scannedResults.document_status ? (
                 <View className='flex-1 my-4'>
                     <Pdf
+                        trustAllCerts={false}
+                        source={{ uri: scannedResults.fileUrl || scannedResults.pdf_url }}
+                        onError={(error) => {
+                            console.log(error, "PDF_ERROR");
+                        }}
                         style={{
                             flex: 1,
                             width: "100%",
                             height: "100%",
                             backgroundColor: "#FFF"
                         }}
-                        source={{ uri: scannedResults.fileUrl || scannedResults.pdf_url }}
                     />
                 </View>
             ) : (
@@ -100,10 +102,10 @@ const ViewCertificate = ({ scannedResults, barcodeData }: Props) => {
                         <TableHeader>
                             <TableRow>
                                 <TableHead className='px-0.5' style={{ width: columnWidths[0] }}>
-                                    <Text>Name</Text>
+                                    <Text className='font-medium'>Name</Text>
                                 </TableHead>
                                 <TableHead style={{ width: columnWidths[1] }}>
-                                    <Text>Decrypted Value</Text>
+                                    <Text className='font-medium'>Decrypted Value</Text>
                                 </TableHead>
                             </TableRow>
                         </TableHeader>

@@ -53,13 +53,13 @@ const ScanResultScreen = ({ }: Props) => {
                 onPageSelected={(e) => setActiveTabIndex(e.nativeEvent.position)}
                 className='p-4'
             >
-                <View key="1" className='p-4'>
+                <View key="1" className='p-4 flex-1'>
                     <ViewCertificate
                         scannedResults={JSON.parse(scanned_results)}
                         barcodeData={qr_data}
                     />
                 </View>
-                <View key="2" className='items-center justify-center gap-2'>
+                <View key="2" className='items-center justify-center gap-2 flex-1'>
                     <Text className='text-center text-xl font-medium max-w-md'>
                         Go to the 1D Barcode Scanner and view the printing details.
                     </Text>

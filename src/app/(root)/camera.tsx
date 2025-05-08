@@ -1,4 +1,4 @@
-import { Alert, Platform, View } from 'react-native'
+import { Platform, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 
 import { CameraView, useCameraPermissions, BarcodeScanningResult, BarcodeType } from 'expo-camera';
@@ -14,7 +14,7 @@ import axiosInstance from '@/utils/axiosInstance';
 import { SCAN_INSTITUTE_CERT, SCAN_VERIFIER_CERT } from '@/utils/routes';
 import useUser from '@/hooks/useUser';
 import { useToast } from 'react-native-toast-notifications';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 
 type Props = {}
 
@@ -23,12 +23,12 @@ const CameraScreen = ({ }: Props) => {
     const { userDetails } = useUser();
 
     const [scanned, setScanned] = useState<boolean>(false);
-    const [barcodeResult, setBarcodeResult] = useState();
+    const [isFetchingScannedData, setIsFetchingScannedData] = useState<boolean>(false);
 
     const [permission, requestPermission] = useCameraPermissions();
     const toast = useToast();
 
-    const { scanner_type } = useLocalSearchParams();
+    const { scanner_type } = useLocalSearchParams<{ scanner_type: BarcodeType }>();
 
     const navigation = useNavigation();
 
@@ -42,59 +42,59 @@ const CameraScreen = ({ }: Props) => {
 
     const handleBarCodeScanned = (barcodeData: BarcodeScanningResult) => {
         setScanned(true);
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid)
-        console.log(barcodeData);
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
         showScannedResult(barcodeData);
+        setTimeout(() => setScanned(false), 2000); // Enable scanning after 2 seconds
     };
 
     const showScannedResult = async (barcodeData: BarcodeScanningResult) => {
+        if (scanned) return;
+
+        setIsFetchingScannedData(true);
 
         const formatBarcodeData = barcodeData.data.split("\n").filter(line => line.trim() !== "");
-
         const sanitizeBarcodeData = formatBarcodeData.pop() || ""; // Last valid line
         const otherBarcodeData = formatBarcodeData.join("\n"); // Remaining lines combined back
 
         const scannedFormData = new FormData();
-
         scannedFormData.append("device_type", Platform.OS);
-        //@ts-ignore
         scannedFormData.append("scanned_by", userDetails?.username || userDetails?.institute_username);
-        //@ts-ignore
-        scannedFormData.append("user_id", userDetails?.id)
+        scannedFormData.append("user_id", userDetails?.id);
         scannedFormData.append("key", sanitizeBarcodeData);
 
         try {
             const response = await axiosInstance.post(userDetails?.user_type === 0 ? SCAN_VERIFIER_CERT : SCAN_INSTITUTE_CERT, scannedFormData);
 
             if (!response.data.success) {
-                setTimeout(() => {
-                    setScanned(false);
-                }, 2000);
-                return toast.show(response.data?.data?.message || response.data?.message);
+                toast.show(response.data?.data?.message || response.data?.message, {
+                    data: response.data
+                });
+                setIsFetchingScannedData(false);
+                return;
             };
 
-            console.log(response.data, "BARCODE_API_RES");
-            setScanned(false);
+            Haptics.notificationAsync(
+                Haptics.NotificationFeedbackType.Success
+            )
+            setIsFetchingScannedData(false);
             router.navigate({
                 pathname: "/scan-result",
                 params: {
                     scanned_results: JSON.stringify(response.data?.data),
                     qr_data: otherBarcodeData,
                 }
-            })
-
+            });
         } catch (error) {
-            setScanned(false);
             if (axios.isAxiosError<IServerError>(error)) {
-                console.log(error.response?.data, "ERROR_AXIOS");
                 const errorMessage = error.response?.data?.data?.message || "An error occurred";
-                toast.show(errorMessage);
-                return; // Ensure the function exits after handling the error
+                toast.show(errorMessage, {
+                    data: error.response?.data?.data
+                });
             }
-            // Fallback for non-Axios errors
-            toast.show(error?.message || "An unexpected error occurred");
-        }
-    }
+            // Delay resuming scanning
+            setTimeout(() => setScanned(false), 2000);
+        };
+    };
 
     if (!permission) {
         // Camera permissions are still loading.
@@ -116,15 +116,26 @@ const CameraScreen = ({ }: Props) => {
     return (
         <View className='flex-1 justify-center'>
             <CameraView
-                style={{ flex: 1, }}
+                style={{ flex: 1, position: 'relative' }}
                 barcodeScannerSettings={{
-                    barcodeTypes: [scanner_type as BarcodeType],
+                    barcodeTypes: [scanner_type],
                 }}
-                onBarcodeScanned={(data) => {
-                    scanned ? undefined : handleBarCodeScanned(data)
-                }}
+                onBarcodeScanned={(data) => handleBarCodeScanned(data)}
             >
-                <BarcodeMask width={300} height={scanner_type == "qr" ? 300 : 100} showAnimatedLine={false} edgeRadius={8} />
+                <BarcodeMask
+                    width={300}
+                    height={scanner_type == "qr" ? 300 : 100}
+                    showAnimatedLine={false}
+                    edgeRadius={8}
+                />
+
+                {isFetchingScannedData && (
+                    <View className='absolute top-3/4 self-center items-center flex-row'>
+                        <Text className='text-white bg-black/40 p-4 rounded-lg'>
+                            Scanning your barcode data. Please wait...
+                        </Text>
+                    </View>
+                )}
             </CameraView>
         </View>
     )

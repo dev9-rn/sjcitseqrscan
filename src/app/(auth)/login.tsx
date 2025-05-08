@@ -29,6 +29,7 @@ const LoginScreen = ({ }: Props) => {
     const { setUserDetails } = useUser();
 
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+    const [isForgotPasswordVisible, setIsForgotPasswordVisible] = useState<boolean>(false);
 
     const [isUserNameFocused, setIsUserNameFocused] = useState<boolean>(false);
     const [isPasswordFocused, setIsPasswordFocused] = useState<boolean>(false);
@@ -45,8 +46,6 @@ const LoginScreen = ({ }: Props) => {
         const loginBody = new FormData();
         loginBody.append(login_type.toString().toLocaleLowerCase() != "institute" ? "username" : "institute_username", formData.userName);
         loginBody.append("password", formData.userPass);
-
-        console.log(loginBody, "LOGIN_BODY");
 
         try {
             const response = await axiosInstance.post(
@@ -78,9 +77,9 @@ const LoginScreen = ({ }: Props) => {
     return (
         <View className='flex-1 bg-white'>
             <View className='p-4 gap-8'>
-                <Text className='text-4xl font-semibold text-secondary'>
+                <Text className='text-4xl font-semibold'>
                     Welcome back,
-                    <Text className='capitalize text-4xl font-semibold text-secondary'>
+                    <Text className='capitalize text-4xl font-semibold'>
                         {login_type}
                     </Text>
                 </Text>
@@ -89,15 +88,15 @@ const LoginScreen = ({ }: Props) => {
                     {/* Form Actions */}
                     <View className='gap-6'>
                         <View className='gap-2'>
-                            <Text className='text-lg text-secondary'>Username</Text>
+                            <Text className='text-lg'>Username</Text>
                             <Controller
                                 control={control}
                                 name='userName'
                                 rules={{
-                                    required: true,
+                                    required: "Please enter your username",
                                 }}
                                 render={({ field: { onBlur, onChange, value } }) => (
-                                    <View className={`border rounded-lg ${isUserNameFocused ? "border-primary" : "border-input"}`}>
+                                    <View className={`border rounded-lg ${isUserNameFocused ? "border-primary border-2" : "border-input"} ${errors.userName && "border-red-500"}`}>
                                         <Input
                                             className='border-0'
                                             placeholder='Enter your username'
@@ -115,23 +114,21 @@ const LoginScreen = ({ }: Props) => {
                                     </View>
                                 )}
                             />
-
-                            {errors.userName?.type === "required" && <Text className='text-destructive'>Please enter your username</Text>}
-                            {(errors.userName?.type !== "required" && errors.userPass) && <Text className='text-destructive'>{errors.userName?.message}</Text>}
+                            {errors.userName && <Text className='text-destructive'>{errors.userName?.message}</Text>}
                         </View>
 
                         <View className='gap-2'>
-                            <Text className='text-lg text-secondary'>Password</Text>
+                            <Text className='text-lg'>Password</Text>
                             <Controller
                                 control={control}
                                 name='userPass'
                                 rules={{
-                                    required: true,
+                                    required: "Please enter your password",
                                 }}
                                 render={({ field: { onChange, onBlur, value } }) => (
-                                    <View className={`flex-row items-center border rounded-lg ${isPasswordFocused ? "border-primary" : "border-input"}`}>
+                                    <View className={`flex-row items-center border rounded-lg ${isPasswordFocused ? "border-primary border-2" : "border-input"} ${errors.userPass && "border-red-500"}`}>
                                         <Input
-                                            className='border-0 flex-1'
+                                            className='border-0 border-none flex-1'
                                             placeholder='Enter your password'
                                             keyboardType='default'
                                             secureTextEntry={!isPasswordVisible}
@@ -161,8 +158,7 @@ const LoginScreen = ({ }: Props) => {
                                 )}
                             />
 
-                            {errors.userPass?.type === "required" && <Text className='text-destructive'>Please enter your password</Text>}
-                            {(errors.userPass?.type !== "required" && errors.userPass) && <Text className='text-destructive'>{errors.userName?.message}</Text>}
+                            {errors.userPass && <Text className='text-destructive'>{errors.userPass?.message}</Text>}
                         </View>
                     </View>
 
@@ -181,8 +177,21 @@ const LoginScreen = ({ }: Props) => {
                                     </Text>
                                 </Button>
                             </View>
+                            {/* <Button
+                                variant={"ghost"}
+                                size={"sm"}
+                                className='p-0'
+                                onPress={() => setIsForgotPasswordVisible(true)}
+                            >
+                                <Text className='text-destructive'>
+                                    Forgot password
+                                </Text>
+                            </Button> */}
 
-                            <ForgotPasswordDialog />
+                            <ForgotPasswordDialog
+                                isForgotPasswordVisible={isForgotPasswordVisible}
+                                setIsForgotPasswordVisible={setIsForgotPasswordVisible}
+                            />
                         </View>
                     )}
                 </View>

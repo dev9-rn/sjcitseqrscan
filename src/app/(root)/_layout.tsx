@@ -8,10 +8,6 @@ type Props = {}
 
 const RootLayout = ({ }: Props) => {
 
-    const { isUserLoggedIn } = useAuth();
-
-    const router = useRouter();
-
     return (
         <Stack>
 
@@ -72,13 +68,11 @@ const RootLayout = ({ }: Props) => {
                 name='scan-history-details'
                 options={{
                     presentation: "modal",
-                    headerBackVisible: false,
+                    // headerShadowVisible: true,
+                    // headerTitle: "Modal Details",
+                    // headerBackVisible: false,
                     // headerShadowVisible: false,
-                    // header: () => (
-                    //     <Header isBackVisible headerTitle='Scanned History' />
-                    // )
                 }}
-
             />
 
         </Stack>

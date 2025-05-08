@@ -36,7 +36,6 @@ const SignUpScreen = ({ }: Props) => {
     });
 
     const handleUserSignUp: SubmitHandler<SignUpForm | FieldValues> = async (formData) => {
-        console.log(formData, "SIGN_UP_FORMDATA");
 
         const signUpFormData = new FormData();
 

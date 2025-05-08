@@ -19,7 +19,7 @@ const Header = ({ isBackVisible = false, headerTitle, isLogoVisible }: Props) =>
     const insets = useSafeAreaInsets();
 
     return (
-        <View className={`flex-row items-center justify-between w-full bg-white`} style={{ paddingTop: insets.top }}>
+        <View className={`flex-row items-center justify-between w-full p-4 ${route.name != "camera" && "bg-white"}`} style={{ paddingTop: insets.top }}>
 
             {isLogoVisible && !headerTitle && (
                 <Image

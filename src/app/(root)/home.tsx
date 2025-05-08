@@ -5,10 +5,11 @@ import useAuth from '@/hooks/useAuth'
 import useUser from '@/hooks/useUser'
 
 import { ScanQrCode } from "@/libs/icons/ScanQr"
+import { FileClockIcon } from "@/libs/icons/FileClockIcon"
+import { ScanBarcodeIcon } from "@/libs/icons/ScanBarcode"
 import { router } from 'expo-router'
-import { Button } from '@/components/ui/button'
-import { useToast } from 'react-native-toast-notifications'
 import { Text } from '@/components/ui/text'
+import { BarcodeType } from 'expo-camera'
 
 type Props = {}
 
@@ -16,7 +17,7 @@ const HomeScreen = ({ }: Props) => {
 
     const { userDetails } = useUser();
 
-    const goToCameraScanner = (scanner_type: string) => {
+    const goToCameraScanner = (scanner_type: BarcodeType) => {
         router.navigate({
             pathname: "/camera",
             params: {
@@ -37,56 +38,77 @@ const HomeScreen = ({ }: Props) => {
                 </Text>
             </View>
 
-            <View className='p-4 flex-1 gap-4 items-center'>
-                <TouchableOpacity onPress={() => goToCameraScanner("qr")} className='w-full'>
-                    <Card className='w-full'>
+            <View className='p-4 flex-row items-center justify-between flex-wrap gap-2 xs:gap-3'>
+                <TouchableOpacity onPress={() => goToCameraScanner("qr")} className='w-[48%]'>
+                    <Card className="w-full">
                         <CardHeader>
                             <CardTitle>Scan Certificates</CardTitle>
                             <CardDescription>
-                                Scan and view valid certificates
+                                Scan and view certificates
                             </CardDescription>
                         </CardHeader>
                         <CardContent className='gap-2'>
-                            <ScanQrCode className='text-primary' height={"38"} width={"38"} />
-                            <Text className='text-lg font-medium'>Scan QR Code</Text>
+                            <ScanQrCode className='text-primary' height={"35"} width={"35"} />
+                            <Text className='text-lg font-medium'>Scan QR code</Text>
                         </CardContent>
                     </Card>
                 </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => goToCameraScanner("code128")} className='w-full'>
-                    <Card className='w-full'>
-                        <CardHeader>
-                            <CardTitle>Card Title</CardTitle>
-                            <CardDescription>Card Description</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <Text>Card Content</Text>
-                        </CardContent>
-                        <CardFooter>
-                            <Text>Card Footer</Text>
-                        </CardFooter>
-                    </Card>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => { router.navigate("/scan-history") }} className='w-full'>
-                    <Card className='w-full'>
-                        <CardHeader>
-                            <CardTitle>
-                                View scanned history
-                            </CardTitle>
-                            <CardDescription>
-                                View all the recent scanned document history
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <Text>Card Content</Text>
-                        </CardContent>
-                        <CardFooter>
-                            <Text>Card Footer</Text>
-                        </CardFooter>
-                    </Card>
-                </TouchableOpacity>
+                {userDetails?.institute_username && (
+                    <>
+                        <TouchableOpacity onPress={() => goToCameraScanner("code128")} className="w-[48%]">
+                            <Card className="w-full">
+                                <CardHeader>
+                                    <CardTitle>
+                                        Scan audit trails
+                                    </CardTitle>
+                                    <CardDescription>
+                                        Scan and view audit trials
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className='gap-2'>
+                                    <ScanBarcodeIcon className='text-primary' height={"35"} width={"35"} />
+                                    <Text className='text-lg font-medium'>Scan audit trails</Text>
+                                </CardContent>
+                            </Card>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => goToCameraScanner("qr")} className="w-[48%]">
+                            <Card className="w-full">
+                                <CardHeader>
+                                    <CardTitle>
+                                        Scan answer booklet
+                                    </CardTitle>
+                                    <CardDescription>
+                                        Scan and view answer booklet
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className='gap-2'>
+                                    <ScanBarcodeIcon className='text-primary' height={"35"} width={"35"} />
+                                    <Text className='text-lg font-medium'>Scan answer booklet</Text>
+                                </CardContent>
+                            </Card>
+                        </TouchableOpacity>
+                    </>
+                )}
+                {!userDetails?.institute_username && (
+                    <TouchableOpacity onPress={() => router.navigate("/scan-history")} className="w-[48%]">
+                        <Card className="w-full">
+                            <CardHeader>
+                                <CardTitle>
+                                    Scanned history
+                                </CardTitle>
+                                <CardDescription>
+                                    View recently scanned documents
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className='gap-2'>
+                                <FileClockIcon className='text-primary' height={"35"} width={"35"} />
+                                <Text className='text-lg font-medium'>View history</Text>
+                            </CardContent>
+                        </Card>
+                    </TouchableOpacity>
+                )}
             </View>
+
         </View>
     )
 }
