@@ -12,7 +12,7 @@ type Props = {
 const ToastNotification = ({ toastData }: Props) => {
 
     const isActionSuccess = (toastData.data?.status || 0) <= 200
-    const isActionPending = toastData.data.status === "pending"
+    const isActionPending = toastData.data?.status === "pending"
 
     return (
         <View className='android:shadow-lg ios:shadow-md bg-white p-4 rounded-lg mx-4'>

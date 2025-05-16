@@ -75,6 +75,17 @@ const RootLayout = ({ }: Props) => {
                 }}
             />
 
+            <Stack.Screen
+                name='scan-audit-details'
+                options={{
+                    headerBackVisible: false,
+                    headerShadowVisible: false,
+                    header: () => (
+                        <Header isBackVisible headerTitle='Scanned Details' />
+                    )
+                }}
+            />
+
         </Stack>
     )
 }

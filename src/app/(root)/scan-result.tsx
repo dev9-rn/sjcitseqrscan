@@ -23,9 +23,9 @@ const TABS = [
 const ScanResultScreen = ({ }: Props) => {
 
     const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
+    const [pagerScrollEnabled, setPagerScrollEnabled] = useState<boolean>(true);
 
     const { scanned_results, qr_data } = useLocalSearchParams();
-
     const pagerRef = useRef<PagerView>(null);
 
     const handleTabSwitch = (index: number) => {
@@ -52,11 +52,13 @@ const ScanResultScreen = ({ }: Props) => {
                 initialPage={0}
                 onPageSelected={(e) => setActiveTabIndex(e.nativeEvent.position)}
                 className='p-4'
+                scrollEnabled={pagerScrollEnabled}
             >
                 <View key="1" className='p-4 flex-1'>
                     <ViewCertificate
                         scannedResults={JSON.parse(scanned_results)}
                         barcodeData={qr_data}
+                        setPagerScrollEnabled={setPagerScrollEnabled}
                     />
                 </View>
                 <View key="2" className='items-center justify-center gap-2 flex-1'>
@@ -65,7 +67,7 @@ const ScanResultScreen = ({ }: Props) => {
                     </Text>
 
                     <Button
-                        onPress={() => router.push({
+                        onPress={() => router.navigate({
                             pathname: "/camera",
                             params: {
                                 scanner_type: "code128"

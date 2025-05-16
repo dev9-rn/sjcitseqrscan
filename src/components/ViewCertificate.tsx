@@ -1,5 +1,5 @@
 import { FlatList, ScrollView, useWindowDimensions, View } from 'react-native'
-import React, { useMemo } from 'react'
+import React, { useMemo, useRef } from 'react'
 import Pdf from 'react-native-pdf';
 import {
     Card,
@@ -26,11 +26,12 @@ import { Separator } from './ui/separator';
 type Props = {
     scannedResults: IVerifierCertificate & IScanHistoryData;
     barcodeData?: string | string[];
+    setPagerScrollEnabled?: (enabled: boolean) => void;
 };
 
 const MIN_COLUMN_WIDTHS = [180, 180];
 
-const ViewCertificate = ({ scannedResults, barcodeData }: Props) => {
+const ViewCertificate = ({ scannedResults, barcodeData, setPagerScrollEnabled }: Props) => {
 
     const { width } = useWindowDimensions();
     const insets = useSafeAreaInsets();
@@ -72,7 +73,19 @@ const ViewCertificate = ({ scannedResults, barcodeData }: Props) => {
             </Card>
 
             {scannedResults.verification_type != 1 || scannedResults.document_status ? (
-                <View className='flex-1 my-4'>
+                <View
+                    className='flex-1 my-4'
+                    onStartShouldSetResponder={() => {
+                        // Disable pager scroll when user starts interacting with PDF
+                        setPagerScrollEnabled?.(false);
+                        return false; // Don't block children from handling the event
+                    }}
+                    onResponderRelease={() => {
+                        // Re-enable pager scroll when user stops interacting
+                        setPagerScrollEnabled?.(true);
+                        return true;
+                    }}
+                >
                     <Pdf
                         trustAllCerts={false}
                         source={{ uri: scannedResults.fileUrl || scannedResults.pdf_url }}

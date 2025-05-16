@@ -3,12 +3,12 @@ import React from 'react'
 
 type Props = {}
 
-const ViewPrinting = ({ }: Props) => {
+const ViewPrintingDetails = ({ }: Props) => {
     return (
         <View>
-            <Text>ViewPrinting</Text>
+            <Text>ViewPrintingDetails</Text>
         </View>
     )
 }
 
-export default ViewPrinting
+export default ViewPrintingDetails

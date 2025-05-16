@@ -11,7 +11,7 @@ import BarcodeMask from 'react-native-barcode-mask';
 
 import * as Haptics from 'expo-haptics';
 import axiosInstance from '@/utils/axiosInstance';
-import { SCAN_INSTITUTE_CERT, SCAN_VERIFIER_CERT } from '@/utils/routes';
+import { SCAN_AUDIT_TRIALS, SCAN_INSTITUTE_CERT, SCAN_VERIFIER_CERT } from '@/utils/routes';
 import useUser from '@/hooks/useUser';
 import { useToast } from 'react-native-toast-notifications';
 import axios from 'axios';
@@ -63,7 +63,7 @@ const CameraScreen = ({ }: Props) => {
         scannedFormData.append("key", sanitizeBarcodeData);
 
         try {
-            const response = await axiosInstance.post(userDetails?.user_type === 0 ? SCAN_VERIFIER_CERT : SCAN_INSTITUTE_CERT, scannedFormData);
+            const response = await axiosInstance.post(scanner_type === "code128" ? SCAN_AUDIT_TRIALS : userDetails?.user_type === 0 ? SCAN_VERIFIER_CERT : SCAN_INSTITUTE_CERT, scannedFormData);
 
             if (!response.data.success) {
                 toast.show(response.data?.data?.message || response.data?.message, {
@@ -77,11 +77,22 @@ const CameraScreen = ({ }: Props) => {
                 Haptics.NotificationFeedbackType.Success
             )
             setIsFetchingScannedData(false);
+            if (scanner_type === "code128") {
+                router.navigate({
+                    pathname: "/scan-audit-details",
+                    params: {
+                        scanned_results: JSON.stringify(response.data?.data),
+                        qr_data: otherBarcodeData,
+                    }
+                });
+                return;
+            };
             router.navigate({
                 pathname: "/scan-result",
                 params: {
                     scanned_results: JSON.stringify(response.data?.data),
                     qr_data: otherBarcodeData,
+                    qr_type: scanner_type,
                 }
             });
         } catch (error) {

@@ -4,7 +4,6 @@ import axiosInstance from '@/utils/axiosInstance'
 import { GET_SCAN_HISTORY } from '@/utils/routes'
 import useUser from '@/hooks/useUser'
 import { Text } from '@/components/ui/text'
-import { Button } from '@/components/ui/button'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { cn } from '@/libs/utils'
@@ -121,33 +120,37 @@ const ScanHistoryScreen = ({ }: Props) => {
                             }}
                             showsVerticalScrollIndicator={false}
                             data={userScannedHistory}
-                            renderItem={({ item, index }) => (
-                                <TableRow
-                                    key={item.id}
-                                    className={cn('active:bg-muted', index % 2 && 'bg-muted/40 ')}
-                                    onPress={() => goToCertificateDetails(item)}
-                                >
-                                    <TableCell style={{ width: columnWidths[0] }}>
-                                        <Text>{item.document_id}</Text>
-                                    </TableCell>
-                                    <TableCell style={{ width: columnWidths[1] }}>
-                                        <Text className='text-center'>
-                                            {formatDateTime(item.date_time)}
-                                        </Text>
-                                    </TableCell>
-                                    <TableCell style={{ width: columnWidths[2] }}>
-                                        {Platform.OS === "ios" ? (
+                            renderItem={({ item, index }) => {
+                                return (
+                                    <TableRow
+                                        key={item.id}
+                                        className={cn('active:bg-muted', index % 2 && 'bg-muted/40 ')}
+                                        onPress={() => goToCertificateDetails(item)}
+                                    >
+                                        <TableCell style={{ width: columnWidths[0] }}>
+                                            <Text>{item.document_id}</Text>
+                                        </TableCell>
+                                        <TableCell style={{ width: columnWidths[1] }}>
+                                            <Text className='text-center'>
+                                                {formatDateTime(item.date_time)}
+                                            </Text>
+                                        </TableCell>
+                                        <TableCell style={{ width: columnWidths[2] }}>
                                             <View>
-                                                <Image source={require("@/assets/images/logos/apple-logo.svg")} style={{ height: 20, width: 20 }} contentFit='contain' />
+                                                <Image
+                                                    source={
+                                                        item.device_type === "ios"
+                                                            ? require("@/assets/images/logos/apple-logo.svg")
+                                                            : require("@/assets/images/logos/android-logo.png")
+                                                    }
+                                                    style={{ height: 20, width: 20 }}
+                                                    contentFit="contain"
+                                                />
                                             </View>
-                                        ) : (
-                                            <View>
-                                                <Image source={require("@/assets/images/logos/android-logo.png")} style={{ height: 25, width: 25 }} contentFit='contain' />
-                                            </View>
-                                        )}
-                                    </TableCell>
-                                </TableRow>
-                            )}
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            }}
                             keyExtractor={(item) => item.id.toString()}
                         />
                     </TableBody>

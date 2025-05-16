@@ -98,4 +98,14 @@ interface IScanHistoryData {
     scan_result: number;
     scanned_data: string;
     site_id: number;
+};
+
+interface IAuditScanDetails {
+    serialNo: string;
+    userPrinted: string;
+    printingDateTime: string; // You can use `Date` if you plan to parse it
+    printerUsed: string;
+    printCount: number;
+    scan_result: number;
+    key: string;
 }
