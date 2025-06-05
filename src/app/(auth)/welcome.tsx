@@ -16,15 +16,15 @@ const WelcomeScreen = ({ }: Props) => {
             params: {
                 login_type
             }
-        })
-    }
+        });
+    };
 
     return (
         <SafeAreaView className='flex-1 bg-blue-50'>
             <View className='p-4 items-center justify-around flex-1'>
 
                 <View>
-                    <Text className='text-2xl font-semibold text-secondary'>
+                    <Text className='text-2xl font-semibold'>
                         Welcome to Demo SeQR Scan
                     </Text>
                 </View>
@@ -56,10 +56,10 @@ const WelcomeScreen = ({ }: Props) => {
                     </Button>
 
                     <Button
-                        variant={"outline"}
+                        variant={"secondary"}
                         onPress={() => handleLoginWithUserType({ login_type: "institute" })}
                     >
-                        <Text className='text-secondary'>Login as institute</Text>
+                        <Text>Login as institute</Text>
                     </Button>
                 </View>
             </View>

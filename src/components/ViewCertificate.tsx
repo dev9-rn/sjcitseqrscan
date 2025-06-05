@@ -1,5 +1,5 @@
-import { Alert, Dimensions, FlatList, ScrollView, useWindowDimensions, View } from 'react-native'
-import React, { useMemo } from 'react'
+import { FlatList, ScrollView, useWindowDimensions, View } from 'react-native'
+import React, { useMemo, useRef } from 'react'
 import Pdf from 'react-native-pdf';
 import {
     Card,
@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/card';
 import { Text } from '@/components/ui/text';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Button } from '@/components/ui/button';
 import {
     Table,
     TableBody,
@@ -23,16 +22,16 @@ import {
 } from '@/components/ui/table';
 import { cn } from '@/libs/utils';
 import { Separator } from './ui/separator';
-// import { ChevronDown } from '@/lib/icons/ChevronDown';
 
 type Props = {
-    scannedResults: IVerifierCertificate;
-    barcodeData: string | string[];
+    scannedResults: IVerifierCertificate & IScanHistoryData;
+    barcodeData?: string | string[];
+    setPagerScrollEnabled?: (enabled: boolean) => void;
 };
 
 const MIN_COLUMN_WIDTHS = [180, 180];
 
-const ViewCertificate = ({ scannedResults, barcodeData }: Props) => {
+const ViewCertificate = ({ scannedResults, barcodeData, setPagerScrollEnabled }: Props) => {
 
     const { width } = useWindowDimensions();
     const insets = useSafeAreaInsets();
@@ -54,7 +53,7 @@ const ViewCertificate = ({ scannedResults, barcodeData }: Props) => {
                 <CardContent>
                     <Text className='text-base xs:text-lg'>
                         Document ID:{" "}
-                        <Text className='font-semibold'>{scannedResults.serial_no}</Text>
+                        <Text className='font-semibold'>{scannedResults.serial_no || scannedResults.document_id}</Text>
                     </Text>
                     <Text className='text-base xs:text-lg'>
                         Status:{" "}
@@ -73,16 +72,32 @@ const ViewCertificate = ({ scannedResults, barcodeData }: Props) => {
                 </CardContent>
             </Card>
 
-            {scannedResults.verification_type != 1 ? (
-                <View className='flex-1 my-4'>
+            {scannedResults.verification_type != 1 || scannedResults.document_status ? (
+                <View
+                    className='flex-1 my-4'
+                    onStartShouldSetResponder={() => {
+                        // Disable pager scroll when user starts interacting with PDF
+                        setPagerScrollEnabled?.(false);
+                        return false; // Don't block children from handling the event
+                    }}
+                    onResponderRelease={() => {
+                        // Re-enable pager scroll when user stops interacting
+                        setPagerScrollEnabled?.(true);
+                        return true;
+                    }}
+                >
                     <Pdf
+                        trustAllCerts={false}
+                        source={{ uri: scannedResults.fileUrl || scannedResults.pdf_url }}
+                        onError={(error) => {
+                            console.log(error, "PDF_ERROR");
+                        }}
                         style={{
                             flex: 1,
                             width: "100%",
                             height: "100%",
                             backgroundColor: "#FFF"
                         }}
-                        source={{ uri: scannedResults.fileUrl }}
                     />
                 </View>
             ) : (
@@ -100,10 +115,10 @@ const ViewCertificate = ({ scannedResults, barcodeData }: Props) => {
                         <TableHeader>
                             <TableRow>
                                 <TableHead className='px-0.5' style={{ width: columnWidths[0] }}>
-                                    <Text>Name</Text>
+                                    <Text className='font-medium'>Name</Text>
                                 </TableHead>
                                 <TableHead style={{ width: columnWidths[1] }}>
-                                    <Text>Decrypted Value</Text>
+                                    <Text className='font-medium'>Decrypted Value</Text>
                                 </TableHead>
                             </TableRow>
                         </TableHeader>

@@ -10,6 +10,10 @@ import { Separator } from './ui/separator'
 import { router } from 'expo-router'
 import { storage } from '@/utils/storageService'
 import useAuth from '@/hooks/useAuth'
+import axiosInstance from '@/utils/axiosInstance'
+import { USER_LOGOUT } from '@/utils/routes'
+import { useToast } from 'react-native-toast-notifications'
+import axios from 'axios'
 
 type Props = {}
 
@@ -17,7 +21,10 @@ const MenuPopover = ({ }: Props) => {
 
     const { setIsUserLoggedIn, setAuthToken, } = useAuth();
 
+    const popoverTriggerRef = useRef<React.ElementRef<typeof PopoverTrigger>>(null);
+
     const insets = useSafeAreaInsets();
+    const toast = useToast();
 
     const [headerLayout, setHeaderLayout] = useState<LayoutRectangle | undefined>(undefined);
 
@@ -28,11 +35,34 @@ const MenuPopover = ({ }: Props) => {
         right: 12,
     };
 
-    const handleUserLogOut = () => {
-        storage.clearAll();
-        setAuthToken(null);
-        setIsUserLoggedIn(false);
-        router.replace("/welcome");
+    const handleUserLogOut = async () => {
+
+        try {
+            const response = await axiosInstance.post(USER_LOGOUT);
+
+            if (!response.data.success) {
+                toast.show(response.data?.data?.message || response.data?.message);
+            };
+
+            storage.clearAll();
+            setAuthToken(null);
+            setIsUserLoggedIn(false);
+            toast.show(response.data?.message, {
+                data: response.data
+            });
+            router.replace("/welcome");
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                toast.show(error.response?.data.data.message || error.message);
+            };
+            toast.show(error?.message);
+            storage.clearAll();
+            setAuthToken(null);
+            setIsUserLoggedIn(false);
+            router.replace("/welcome");
+        }
+
+
     }
 
     return (
@@ -41,7 +71,7 @@ const MenuPopover = ({ }: Props) => {
             onLayout={({ nativeEvent: { layout } }) => setHeaderLayout(layout)}
         >
             <Popover>
-                <PopoverTrigger asChild>
+                <PopoverTrigger asChild ref={popoverTriggerRef}>
                     <Button
                         variant='ghost'
                         size={"icon"}
@@ -59,6 +89,7 @@ const MenuPopover = ({ }: Props) => {
                         variant={"ghost"}
                         size={"sm"}
                         onPress={() => {
+                            popoverTriggerRef.current?.close()
                             router.navigate("/about")
                         }}
                     >
@@ -70,7 +101,9 @@ const MenuPopover = ({ }: Props) => {
                     <Button
                         variant={"ghost"}
                         size={"sm"}
-                        onPress={() => handleUserLogOut()}
+                        onPress={() => {
+                            handleUserLogOut()
+                        }}
                     >
                         <Text className='native:text-lg text-destructive'>
                             Logout

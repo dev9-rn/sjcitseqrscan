@@ -8,10 +8,6 @@ type Props = {}
 
 const RootLayout = ({ }: Props) => {
 
-    const { isUserLoggedIn } = useAuth();
-
-    const router = useRouter();
-
     return (
         <Stack>
 
@@ -64,6 +60,28 @@ const RootLayout = ({ }: Props) => {
                     headerShadowVisible: false,
                     header: () => (
                         <Header isBackVisible headerTitle='Scanned History' />
+                    )
+                }}
+            />
+
+            <Stack.Screen
+                name='scan-history-details'
+                options={{
+                    presentation: "modal",
+                    // headerShadowVisible: true,
+                    // headerTitle: "Modal Details",
+                    // headerBackVisible: false,
+                    // headerShadowVisible: false,
+                }}
+            />
+
+            <Stack.Screen
+                name='scan-audit-details'
+                options={{
+                    headerBackVisible: false,
+                    headerShadowVisible: false,
+                    header: () => (
+                        <Header isBackVisible headerTitle='Scanned Details' />
                     )
                 }}
             />
