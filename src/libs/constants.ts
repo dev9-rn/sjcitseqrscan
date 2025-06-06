@@ -21,3 +21,8 @@ export const STORAGE_KEYS = {
     accessToken: "accessToken",
     localUser: "localUser",
 }
+
+export const TITLES = {
+    APP_NAME: 'TPSDI',
+    SHOW_POWER_BY: false
+}

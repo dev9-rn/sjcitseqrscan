@@ -1,23 +1,26 @@
 {
   "expo": {
-    "name": "Demo SeQR",
-    "slug": "demo-seqr",
+    "name": "TPSDI SeQR Scan",
+    "slug": "TPSDI SeQR Scan",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/images/icon.png",
+    "icon": "./src/assets/images/logos/playstore.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.scube.demoseqr"
+      "bundleIdentifier": "org.reactjs.native.example.tpsdi-seqr-scan",
+      "entitlements": {
+        "com.apple.developer.networking.wifi-info": true
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/images/adaptive-icon.png",
+        "foregroundImage": "./src/assets/images/logos/ic_launcher_foreground.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.scube.demoseqr",
+      "package": "com.tpsdi_seqr_scan",
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO",
@@ -37,7 +40,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./src/assets/images/splash-icon.png",
+          "image": "./src/assets/images/logos/playstore.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"

@@ -12,6 +12,7 @@ import { useToast } from 'react-native-toast-notifications'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
 import { router } from 'expo-router'
+import { TITLES } from '@/libs/constants'
 
 type Props = {}
 
@@ -105,7 +106,7 @@ const SignUpScreen = ({ }: Props) => {
                             <Text className='text-center text-sm xs:text-base text-gray-500'>
                                 Please complete all information to create your account on{" "}
                                 <Text className='font-medium'>
-                                    Demo SeQR Docs
+                                    {TITLES.APP_NAME} SeQR Docs
                                 </Text>
                             </Text>
                         </View>

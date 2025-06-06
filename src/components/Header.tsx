@@ -6,6 +6,7 @@ import { router } from 'expo-router'
 import MenuPopover from './MenuPopover'
 import { useRoute } from '@react-navigation/native'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
+import { TITLES } from '@/libs/constants'
 
 type Props = {
     isBackVisible?: boolean;
@@ -24,7 +25,7 @@ const Header = ({ isBackVisible = false, headerTitle, isLogoVisible }: Props) =>
             {isLogoVisible && !headerTitle && (
                 <Image
                     className='size-16'
-                    source={require("@/assets/images/logos/se_doc_logo.png")}
+                    source={require("@/assets/images/logos/wwe.png")}
                     resizeMode='contain'
                 />
             )}
@@ -62,12 +63,12 @@ const Header = ({ isBackVisible = false, headerTitle, isLogoVisible }: Props) =>
                 <View className='flex-row items-center gap-2'>
                     <Image
                         className='size-16'
-                        source={require("@/assets/images/logos/se_doc_logo.png")}
+                        source={require("@/assets/images/logos/wwe.png")}
                         resizeMode='contain'
                     />
                     <View>
                         <Text className={`text-base xs:text-xl text-black`}>
-                            Demo SeQR Docs
+                            {TITLES.APP_NAME} SeQR Docs
                         </Text>
                     </View>
                 </View>

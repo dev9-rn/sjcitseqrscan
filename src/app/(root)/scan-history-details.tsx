@@ -13,6 +13,9 @@ const ScanHistoryDetails = ({ }: Props) => {
 
     const navigation = useNavigation();
 
+    console.log(certificate_details, "certificate_details");
+    
+
     useEffect(() => {
         const parsedDetails: IScanHistoryData = JSON.parse(certificate_details);
 

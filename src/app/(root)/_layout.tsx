@@ -3,6 +3,7 @@ import React, { useEffect } from 'react'
 import { Stack, useRouter } from 'expo-router'
 import Header from '@/components/Header'
 import useAuth from '@/hooks/useAuth'
+import { TITLES } from '@/libs/constants'
 
 type Props = {}
 
@@ -17,7 +18,7 @@ const RootLayout = ({ }: Props) => {
                     headerBackVisible: false,
                     headerShadowVisible: false,
                     header: () => (
-                        <Header isLogoVisible headerTitle='Demo SeQR Docs' />
+                        <Header isLogoVisible headerTitle={`${TITLES.APP_NAME} SeQR Docs`} />
                     )
                 }}
             />
