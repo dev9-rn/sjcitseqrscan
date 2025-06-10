@@ -174,7 +174,9 @@ const ScanHistoryScreen = ({}: Props) => {
                             source={
                               item.device_type === "ios"
                                 ? require("@/assets/images/logos/apple-logo.svg")
-                                : require("@/assets/images/logos/android-logo.png")
+                                : item.device_type === "android"
+                                ? require("@/assets/images/logos/android-logo.png")
+                                : require("@/assets/images/logos/windows.png")
                             }
                             style={{ height: 20, width: 20 }}
                             contentFit="contain"

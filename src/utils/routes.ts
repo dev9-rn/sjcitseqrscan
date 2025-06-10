@@ -13,3 +13,4 @@ export const VERIFIER_RESET_PASSWORD = "/passwordReset";
 export const VERIFY_OTP = "/mobile-no-verify"
 
 export const USER_LOGOUT = "/logout";
+export const DELETE_USER = "delete-user-acc"

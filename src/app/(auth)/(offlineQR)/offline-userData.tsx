@@ -31,7 +31,9 @@ const offlineUserData = (props: Props) => {
       <View className="bg-white rounded-2xl shadow-lg p-6 mx-4 my-5 shadow-blue-100">
         <View className="flex-row justify-center items-center p-4 space-x-2">
           <Icon name="BadgeCheck" color="green" size={35} />
-          <Text className="text-[18px] font-semibold text-gray-900 m-2">Verified</Text>
+          <Text className="text-[18px] font-semibold text-gray-900 m-2">
+            Verified
+          </Text>
         </View>
 
         {imageUri && (
