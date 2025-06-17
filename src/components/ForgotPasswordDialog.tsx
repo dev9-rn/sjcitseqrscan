@@ -1,4 +1,4 @@
-import React, { Dispatch, useRef } from 'react'
+import React, { Dispatch, useRef, useState } from 'react'
 
 import {
     Dialog,
@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from './ui/button';
 import { Text } from './ui/text';
-import { KeyboardAvoidingView, Modal, Platform, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Modal, Platform, TouchableWithoutFeedback, View } from 'react-native';
 import { Controller, FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { Input } from './ui/input';
 import axiosInstance from '@/utils/axiosInstance';
@@ -21,6 +21,7 @@ import { X } from '@/libs/icons/X';
 import { KeyboardAwareScrollView, KeyboardController } from 'react-native-keyboard-controller';
 import useGradualAnimation from '@/hooks/useGradualAnimation';
 import { useToast } from 'react-native-toast-notifications';
+import { cn } from '@/libs/utils';
 
 type Props = {
     isForgotPasswordVisible: boolean;
@@ -36,17 +37,21 @@ const ForgotPasswordDialog = ({ isForgotPasswordVisible, setIsForgotPasswordVisi
     const { height } = useGradualAnimation();
 
     const toast = useToast();
-
+    const [isOpen, setIsOpen] = useState<boolean>(false)
     const { control, handleSubmit, formState: { errors }, } = useForm<ResetFormData>({
         mode: "onChange", // Enables real-time validation updates
         defaultValues: {
             userEmail: ""
         }
     });
+    const [loading, setLoading] = useState<boolean>(false)
+
+    // const popoverTriggerRef = useRef<React.ElementRef<typeof DialogContent>>(null);
+
 
     const handlePasswordChange: SubmitHandler<ResetFormData | FieldValues> = async (formData) => {
         console.log(formData, "FORMDATA");
-
+        setLoading(true)
         const passwordChangeFormData = new FormData();
 
         passwordChangeFormData.append('type', 'forgotPassword');
@@ -58,22 +63,30 @@ const ForgotPasswordDialog = ({ isForgotPasswordVisible, setIsForgotPasswordVisi
             const response = await axiosInstance.post(VERIFIER_RESET_PASSWORD, passwordChangeFormData);
 
             if (response.data.status != 200) {
-
+                toast.show(response.data.message);
             };
-
+            setIsOpen(false)
             toast.show(response.data.message);
+
         } catch (error) {
             console.log(error, "CATHC_ERROR_PASSWORD_CHANGE");
+        } finally {
+            // dialogTriggerRef.current?.
+            setLoading(false)
         }
     }
 
     return (
-        <Dialog>
-            <DialogTrigger asChild>
+        <Dialog open={isOpen}>
+            <DialogTrigger
+                asChild
+
+            >
                 <Button
                     variant={"ghost"}
                     size={"sm"}
                     className='p-0'
+                    onPress={() => setIsOpen(!isOpen)}
                 >
                     <Text className='text-destructive'>
                         Forgot password
@@ -81,11 +94,27 @@ const ForgotPasswordDialog = ({ isForgotPasswordVisible, setIsForgotPasswordVisi
                 </Button>
             </DialogTrigger>
             <DialogContent className='relative' style={{ bottom: height.value && height.value - 220 }}>
-                <DialogHeader>
-                    <DialogTitle>Forgot Password?</DialogTitle>
+                <DialogHeader className='relative'>
+                    <View className='flex-row justify-between items-center'>
+                        <DialogTitle>Forgot Password?</DialogTitle>
+                        <Button
+                            variant={'ghost'}
+                            className={
+                                ' web:group rounded-sm opacity-70 web:ring-offset-background web:transition-opacity web:hover:opacity-100 web:focus:outline-none web:focus:ring-2 web:focus:ring-ring web:focus:ring-offset-2 web:disabled:pointer-events-none'
+                            }
+                            onPress={()=>setIsOpen(false)}
+                        >
+                            <X
+                                size={Platform.OS === 'web' ? 16 : 18}
+                                className={cn('text-muted-foreground', isOpen && 'text-accent-foreground')}
+                            />
+                        </Button>
+                    </View>
                     <DialogDescription>
                         No worries, we will send you reset instruction
                     </DialogDescription>
+
+
                 </DialogHeader>
                 <View>
                     <Controller
@@ -115,11 +144,11 @@ const ForgotPasswordDialog = ({ isForgotPasswordVisible, setIsForgotPasswordVisi
                     {(errors.userEmail?.type !== "required" && errors.userEmail) && <Text className='text-destructive'>{errors.userEmail?.message}</Text>}
                 </View>
 
-                <DialogClose asChild>
+                <DialogClose asChild >
                     <Button
                         onPress={handleSubmit(handlePasswordChange)}
                     >
-                        <Text>OK</Text>
+                        {loading ? <ActivityIndicator size={'small'} color={'#fff'} /> : <Text>OK</Text>}
                     </Button>
                 </DialogClose>
             </DialogContent>

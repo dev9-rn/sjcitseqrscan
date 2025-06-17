@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import React, { useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import {
@@ -27,7 +27,7 @@ type FormData = {
   userPass: "";
 };
 
-const LoginScreen = ({}: Props) => {
+const LoginScreen = ({ }: Props) => {
   const { login_type } = useLocalSearchParams();
 
   const { setIsUserLoggedIn, setAuthToken } = useAuth();
@@ -39,7 +39,7 @@ const LoginScreen = ({}: Props) => {
 
   const [isUserNameFocused, setIsUserNameFocused] = useState<boolean>(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState<boolean>(false);
-
+  const [loading, setLoading] = useState<boolean>(false);
   const toast = useToast();
 
   const {
@@ -66,7 +66,7 @@ const LoginScreen = ({}: Props) => {
       formData.userName
     );
     loginBody.append("password", formData.userPass);
-
+    setLoading(true);
     try {
       const response = await axiosInstance.post(
         login_type.toString().toLocaleLowerCase() != "institute"
@@ -102,9 +102,11 @@ const LoginScreen = ({}: Props) => {
       router.replace("/home");
     } catch (error) {
       throw new Error("Something went wrong while logging you in " + error);
+    } finally {
+      setLoading(false);
     }
   };
-
+  
   return (
     <View className="flex-1 bg-white">
       <View className="p-4 gap-8">
@@ -128,11 +130,10 @@ const LoginScreen = ({}: Props) => {
                 }}
                 render={({ field: { onBlur, onChange, value } }) => (
                   <View
-                    className={`border rounded-lg ${
-                      isUserNameFocused
+                    className={`border rounded-lg ${isUserNameFocused
                         ? "border-primary border-2"
                         : "border-input"
-                    } ${errors.userName && "border-red-500"}`}
+                      } ${errors.userName && "border-red-500"}`}
                   >
                     <Input
                       className="border-0"
@@ -168,11 +169,10 @@ const LoginScreen = ({}: Props) => {
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <View
-                    className={`flex-row items-center border rounded-lg ${
-                      isPasswordFocused
+                    className={`flex-row items-center border rounded-lg ${isPasswordFocused
                         ? "border-primary border-2"
                         : "border-input"
-                    } ${errors.userPass && "border-red-500"}`}
+                      } ${errors.userPass && "border-red-500"}`}
                   >
                     <Input
                       className="border-0 border-none flex-1"
@@ -226,16 +226,6 @@ const LoginScreen = ({}: Props) => {
                   <Text className="text-primary">Sign Up</Text>
                 </Button>
               </View>
-              {/* <Button
-                                variant={"ghost"}
-                                size={"sm"}
-                                className='p-0'
-                                onPress={() => setIsForgotPasswordVisible(true)}
-                            >
-                                <Text className='text-destructive'>
-                                    Forgot password
-                                </Text>
-                            </Button> */}
 
               <ForgotPasswordDialog
                 isForgotPasswordVisible={isForgotPasswordVisible}
@@ -246,8 +236,8 @@ const LoginScreen = ({}: Props) => {
         </View>
 
         {/* Submit button */}
-        <Button onPress={handleSubmit(handleUserLogin)}>
-          <Text>Login</Text>
+        <Button onPress={handleSubmit(handleUserLogin)} disabled={loading}>
+          {loading ? <ActivityIndicator size={'small'} /> : <Text>Login</Text>}
         </Button>
       </View>
     </View>

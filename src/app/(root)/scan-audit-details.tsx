@@ -42,7 +42,7 @@ const ScanAuditDetails = ({ }: Props) => {
                 <Separator className='my-4' />
                 <View className='flex-row items-center'>
                     <Text className='text-lg font-medium'>Status: </Text>
-                    <Text>
+                    <Text className={`${scannedResults.scan_result === 1 && 'text-green-600'}`}>
                         {scannedResults.scan_result === 1 ? "Active" : "Inactive"}
                     </Text>
                 </View>

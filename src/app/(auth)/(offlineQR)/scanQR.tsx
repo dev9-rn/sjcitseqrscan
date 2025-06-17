@@ -8,6 +8,7 @@ import BarcodeMask from "react-native-barcode-mask";
 import { decryptAES } from "../../../libs/decryptAES";
 import { useToast } from "react-native-toast-notifications";
 import { router } from "expo-router";
+import * as Haptics from "expo-haptics";
 type Props = {};
 
 const scanQR = (props: Props) => {
@@ -16,8 +17,7 @@ const scanQR = (props: Props) => {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [otherData, setOtherData] = useState<object | null>(null);
   const toast = useToast();
-
-
+  const [scanned, setScanned] = useState(false);
 
   useEffect(() => {
     if (otherData && imageUri) {
@@ -31,6 +31,7 @@ const scanQR = (props: Props) => {
     }
   }, [otherData, imageUri]);
 
+
   if (!permission) {
     return (
       <Text className="text-base color-black text-center">
@@ -38,6 +39,7 @@ const scanQR = (props: Props) => {
       </Text>
     );
   }
+
 
   if (!permission.granted) {
     return (
@@ -58,8 +60,12 @@ const scanQR = (props: Props) => {
   }
 
   const handleBarCodeData = (barcodeData: any) => {
+    if (scanned) return
+    setScanned(true);
+
     console.log(barcodeData, "barcodeData");
     if (barcodeData?.data) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       try {
         const decryptedData = decryptAES(barcodeData?.data);
         // console.log("Decrypted data:", decryptedData);
@@ -103,33 +109,32 @@ const scanQR = (props: Props) => {
         }
       } catch (error) {
         console.log("Error processing QR code data:", error);
-        toast.show("error", {
-          data: error,
+        toast.show("Invalid QR", {
+          data: { type: 'danger' },
           placement: "bottom",
+          duration: 2000
         });
+        toast.hideAll()
+      } finally {
+        setTimeout(() => setScanned(false), 2000); // Allow rescan after 2 seconds
       }
+    } else {
+      setTimeout(() => setScanned(false), 2000); // Allow rescan after 2 seconds if no data
     }
   };
-  console.log(imageUri, "IMAGE DATA");
-  console.log(otherData, "USER DATA");
-
-  
 
   return (
     <View className="flex-1 justify-center">
       <CameraView
         barcodeScannerSettings={{
           barcodeTypes: ["qr"],
-          // interval: 100, // Scan every 100ms
         }}
-        // enableTorch={flash}
-        // className="flex-1"
         style={{ flex: 1, position: "relative" }}
         onBarcodeScanned={handleBarCodeData}
         autofocus="on"
         pictureSize="high" // High resolution for better detailr
         ratio="16:9" // Modern aspect ratio
-        zoom={0.2} // Slight zoom to focus on QR codes
+        zoom={0.1} // Slight zoom to focus on QR codes
         focusable={true}
         flash={flash}
       >

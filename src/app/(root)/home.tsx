@@ -10,6 +10,7 @@ import { ScanBarcodeIcon } from "@/libs/icons/ScanBarcode"
 import { router } from 'expo-router'
 import { Text } from '@/components/ui/text'
 import { BarcodeType } from 'expo-camera'
+import { TITLES } from '@/libs/constants'
 
 type Props = {}
 
@@ -21,7 +22,7 @@ const HomeScreen = ({ }: Props) => {
         router.navigate({
             pathname: "/camera",
             params: {
-                scanner_type
+                scanner_type: scanner_type
             }
         });
     };
@@ -71,7 +72,7 @@ const HomeScreen = ({ }: Props) => {
                                 </CardContent>
                             </Card>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => goToCameraScanner("qr")} className="w-[48%]">
+                        {TITLES?.SHOW_ANSWER_BOOKLET && <TouchableOpacity onPress={() => goToCameraScanner("qr")} className="w-[48%]">
                             <Card className="w-full">
                                 <CardHeader>
                                     <CardTitle>
@@ -86,7 +87,7 @@ const HomeScreen = ({ }: Props) => {
                                     <Text className='text-lg font-medium'>Scan answer booklet</Text>
                                 </CardContent>
                             </Card>
-                        </TouchableOpacity>
+                        </TouchableOpacity>}
                     </>
                 )}
                 {!userDetails?.institute_username && (

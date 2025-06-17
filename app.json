@@ -28,7 +28,12 @@
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.DOWNLOAD_WITHOUT_NOTIFICATION",
         "android.permission.ACCESS_NETWORK_STATE"
-      ]
+      ],
+      "keystore": {
+        "keystorePath": "credentials/android/keystore.jks",
+        "keystorePassword": "123456",
+        "keyAlias": "my-key-alias"
+      }
     },
     "web": {
       "bundler": "metro",
@@ -60,7 +65,16 @@
         }
       ],
       "@config-plugins/react-native-blob-util",
-      "@config-plugins/react-native-pdf"
+      "@config-plugins/react-native-pdf",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableProguardInReleaseBuilds": true
+          },
+          "ios": {}
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

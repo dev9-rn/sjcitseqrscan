@@ -4,6 +4,7 @@ import {
   LayoutChangeEvent,
   LayoutRectangle,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import React, { useRef, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
@@ -25,7 +26,7 @@ import { TITLES } from "@/libs/constants";
 
 type Props = {};
 
-const MenuPopover = ({}: Props) => {
+const MenuPopover = ({ }: Props) => {
   const { setIsUserLoggedIn, setAuthToken } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -40,7 +41,6 @@ const MenuPopover = ({}: Props) => {
   );
 
   const { userDetails } = useUser();
-  console.log(userDetails?.institute_username, "userDetails");
 
   const contentInsets = {
     top: insets.top + (headerLayout?.height || 0),
@@ -50,6 +50,7 @@ const MenuPopover = ({}: Props) => {
   };
 
   const handleUserLogOut = async () => {
+    setLoading(true);
     try {
       const response = await axiosInstance.post(USER_LOGOUT);
 
@@ -73,6 +74,8 @@ const MenuPopover = ({}: Props) => {
       setAuthToken(null);
       setIsUserLoggedIn(false);
       router.replace("/welcome");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -90,35 +93,8 @@ const MenuPopover = ({}: Props) => {
           onPress: async () => {
             try {
               router.navigate("/(root)/removeAccount");
-              // setLoading(true);
-
-              // const formData = new FormData();
-              // formData.append("username", userDetails?.username);
-              // formData.append("password", password);
-              // const response = await axiosInstance.post(DELETE_USER)
-              // setLoading(false);
-
-              // console.log(response?.data, "DELTE USER");
-
-              // if (response?.data.status === 200) {
-              //   storage.clearAll();
-              //   setAuthToken(null);
-              //   setIsUserLoggedIn(false);
-              //   router.replace("/welcome");
-              // } else {
-              //   toast.show(response.data?.data?.message || response.data?.message);
-              // }
             } catch (error) {
-              // setLoading(false);
-              // if (axios.isAxiosError(error)) {
-              //   toast.show(error.response?.data.data.message || error.message);
-              // }
-              // toast.show(error?.message);
-              // storage.clearAll();
-              // setAuthToken(null);
-              // setIsUserLoggedIn(false);
-              // router.replace("/welcome");
-              // console.error("Delete error:", error);
+              console.error("Delete error:", error);
             }
           },
           style: "destructive",
@@ -154,7 +130,7 @@ const MenuPopover = ({}: Props) => {
             <Text className="native:text-lg">About Us</Text>
           </Button>
           <Separator />
-          {userDetails?.institute_username !== 'Admin' && (
+          {(userDetails?.institute_username?.toLowerCase() !== "admin") && (
             <Button
               variant={"ghost"}
               size={"sm"}
@@ -176,7 +152,11 @@ const MenuPopover = ({}: Props) => {
               handleUserLogOut();
             }}
           >
-            <Text className="native:text-lg text-destructive">Logout</Text>
+            {loading ? (
+              <ActivityIndicator size={'small'} color={'blue'} />
+            ) : (
+              <Text className="native:text-lg text-destructive">Logout</Text>
+            )}
           </Button>
         </PopoverContent>
       </Popover>
