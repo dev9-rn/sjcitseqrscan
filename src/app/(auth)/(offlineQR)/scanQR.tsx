@@ -142,8 +142,8 @@ const scanQR = (props: Props) => {
         onBarcodeScanned={handleBarCodeData}
         autofocus="on"
         pictureSize="high" // High resolution for better detailr
-        ratio="16:9" // Modern aspect ratio
-        zoom={0.1} // Slight zoom to focus on QR codes
+        // ratio="16:9" // Modern aspect ratio
+        zoom={0.22} // Slight zoom to focus on QR codes
         focusable={true}
         flash={flash}
       >
