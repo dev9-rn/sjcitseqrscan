@@ -1,9 +1,6 @@
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
-import UserDetailsCard from "@/components/UserDetailsCard";
-import VerifiedCheckIcon from "../../../libs/icons/VerifiedCheckIcon";
-import { BadgeCheckIcon, CircleCheckBigIcon } from "lucide-react-native";
 import Icon from "@/libs/LucideIcon";
 type Props = {};
 
@@ -12,6 +9,17 @@ const offlineUserData = (props: Props) => {
     imageUri: string;
     otherData: string;
   }>();
+  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
+  useEffect(() => {
+    if (imageUri) {
+      Image.getSize(imageUri, (width, height) => {
+        setImageDimensions({ width, height });
+      }, (error) => {
+        console.error("Failed to get image size", error);
+      });
+    }
+  }, [imageUri]);
+
 
   const parsedData = React.useMemo(() => {
     try {
@@ -37,28 +45,41 @@ const offlineUserData = (props: Props) => {
         </View>
 
         {imageUri && (
-          <View className="items-center mb-6">
+          <View className="items-center mb-6 rounded-[8px]">
             <Image
               source={{ uri: imageUri }}
-              className="w-[140px] h-[140px] self-center mb-2 rounded-full border-[5px] border-blue-400 shadow-md shadow-blue-200"
+              style={{
+                width: imageDimensions.width,
+                height: imageDimensions.height,
+                borderRadius: 8,
+                alignSelf: 'center',
+                marginBottom: 8,
+              }}
               resizeMode="cover"
             />
           </View>
         )}
 
-        {entries.map(([key, value]) => (
-          <View
-            key={key}
-            className="flex-row justify-between items-start py-3 px-1 border-b border-gray-100 last:border-b-0"
-          >
-            <Text className="font-medium text-[16px] text-gray-700 w-[40%]">
-              {key.trim()}
-            </Text>
-            <Text className="text-[16px] text-gray-900 w-[55%] font-normal leading-5">
-              {value}
-            </Text>
-          </View>
-        ))}
+        {entries.map(([key, value]) => {
+          // Transform key: replace _ with space and capitalize each word
+          const formattedKey = key
+            .replace(/_/g, " ")
+            .replace(/\b\w/g, (char) => char.toUpperCase());
+
+          return (
+            <View
+              key={key}
+              className="flex-row justify-between items-start py-3 px-1 border-b border-gray-100 last:border-b-0"
+            >
+              <Text className="font-medium text-[16px] text-gray-700 w-[40%]">
+                {formattedKey}
+              </Text>
+              <Text className="text-[16px] text-gray-900 w-[55%] font-normal leading-5">
+                {value}
+              </Text>
+            </View>
+          );
+        })}
 
         <View className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-400 to-blue-200 rounded-t-2xl" />
       </View>

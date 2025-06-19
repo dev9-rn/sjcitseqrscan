@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import pako from "pako";
@@ -9,6 +9,7 @@ import { decryptAES } from "../../../libs/decryptAES";
 import { useToast } from "react-native-toast-notifications";
 import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
+import { cleanBase64 } from "@/libs/constants";
 type Props = {};
 
 const scanQR = (props: Props) => {
@@ -59,62 +60,70 @@ const scanQR = (props: Props) => {
     );
   }
 
-  const handleBarCodeData = (barcodeData: any) => {
+  const handleBarCodeData = async (barcodeData: any) => {
     if (scanned) return
     setScanned(true);
-
-    console.log(barcodeData, "barcodeData");
     if (barcodeData?.data) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      let rawData = barcodeData?.data || "";
+      const cleanedData = cleanBase64(rawData);
       try {
-        const decryptedData = decryptAES(barcodeData?.data);
-        // console.log("Decrypted data:", decryptedData);
-        if (!decryptedData) {
-          throw new Error("Decryption failed: Empty or invalid result");
-        }
+        if (cleanedData) {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          const decryptedData = await decryptAES(cleanedData);
+          console.log("Decrypted data:", decryptedData);
+          // const decryptedData = await decryptAES(barcodeData?.data);
+          // console.log("Decrypted data:", decryptedData);
+          if (!decryptedData) {
+            throw new Error("Decryption failed: Empty or invalid result");
+          }
 
-        const qrData = JSON.parse(decryptedData);
-        const { image, other_data: user_info } = qrData;
+          const qrData = JSON.parse(decryptedData);
+          const { image, other_data: user_info } = qrData;
 
-        if (image) {
-          const compressedData = atob(image);
-          const compressedArray = new Uint8Array(
-            compressedData.split("").map((char) => char.charCodeAt(0))
-          );
-          const decompressedData = pako.ungzip(compressedArray);
-          const base64Image = btoa(
-            new Uint8Array(decompressedData).reduce(
-              (data, byte) => data + String.fromCharCode(byte),
-              ""
-            )
-          );
-          const imageUri = `data:image/png;base64,${base64Image}`;
-          // console.log("Image URI:", imageUri.substring(0, 100) + "...");
-          setImageUri(imageUri);
-        }
+          if (image) {
+            const compressedData = atob(image);
+            const compressedArray = new Uint8Array(
+              compressedData.split("").map((char) => char.charCodeAt(0))
+            );
+            const decompressedData = pako.ungzip(compressedArray);
+            const base64Image = btoa(
+              new Uint8Array(decompressedData).reduce(
+                (data, byte) => data + String.fromCharCode(byte),
+                ""
+              )
+            );
+            const imageUri = `data:image/png;base64,${base64Image}`;
+            // console.log("Image URI:", imageUri.substring(0, 100) + "...");
+            setImageUri(imageUri);
+          }
 
-        if (user_info) {
-          const compressedOtherData = atob(user_info);
-          const compressedOtherArray = new Uint8Array(
-            compressedOtherData.split("").map((char) => char.charCodeAt(0))
-          );
-          const decompressedOtherData = pako.ungzip(compressedOtherArray);
-          const decodedOtherDataString = new TextDecoder().decode(
-            decompressedOtherData
-          );
-          // console.log("Decoded other data string:", decodedOtherDataString);
-          const decodedOtherData = JSON.parse(decodedOtherDataString);
-          setOtherData(decodedOtherData);
-          // console.log("Parsed other data:", decodedOtherData);
+          if (user_info) {
+            const compressedOtherData = atob(user_info);
+            const compressedOtherArray = new Uint8Array(
+              compressedOtherData.split("").map((char) => char.charCodeAt(0))
+            );
+            const decompressedOtherData = pako.ungzip(compressedOtherArray);
+            const decodedOtherDataString = new TextDecoder().decode(
+              decompressedOtherData
+            );
+            // console.log("Decoded other data string:", decodedOtherDataString);
+            const decodedOtherData = JSON.parse(decodedOtherDataString);
+            setOtherData(decodedOtherData);
+            // console.log("Parsed other data:", decodedOtherData);
+          }
         }
       } catch (error) {
         console.log("Error processing QR code data:", error);
-        toast.show("Invalid QR", {
-          data: { type: 'danger' },
-          placement: "bottom",
-          duration: 2000
-        });
-        toast.hideAll()
+        // Show alert dialog
+        console.error("JSON Parse Error:", error);
+        Alert.alert(
+          "Invalid QR Code",               // Title
+          "The scanned QR code is not valid.", // Message
+          [
+            { text: "OK", onPress: () => console.log("OK Pressed") }
+          ],
+          { cancelable: true }
+        );
       } finally {
         setTimeout(() => setScanned(false), 2000); // Allow rescan after 2 seconds
       }

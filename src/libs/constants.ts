@@ -28,3 +28,8 @@ export const TITLES = {
     SHOW_REMOVE_ACCOUNT: true,
     SHOW_ANSWER_BOOKLET: false
 }
+
+export function cleanBase64(input: string): string {
+  const match = input.match(/[A-Za-z0-9+/=]+/);
+  return match ? match[0] : input;
+}
