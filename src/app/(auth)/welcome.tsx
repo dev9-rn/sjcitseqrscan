@@ -98,11 +98,11 @@ const WelcomeScreen = ({}: Props) => {
             <Text>Login as institute</Text>
           </Button>
 
-          {/* {!isConnected && isConnected !== null && ( */}
+          {!isConnected && isConnected !== null && (
             <Button onPress={handleScanQR} className="bg-slate-700">
               <Text className="text-white">Scan QR to Verify</Text>
             </Button>
-          {/* )} */}
+          )}
         </View>
       </View>
     </SafeAreaView>
