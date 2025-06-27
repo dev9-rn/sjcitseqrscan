@@ -130,7 +130,7 @@ const MenuPopover = ({ }: Props) => {
             <Text className="native:text-lg">About Us</Text>
           </Button>
           <Separator />
-          {(userDetails?.institute_username?.toLowerCase() !== "admin") && (
+          {userDetails && !("institute_username" in userDetails) && (
             <Button
               variant={"ghost"}
               size={"sm"}
@@ -144,6 +144,20 @@ const MenuPopover = ({ }: Props) => {
               </Text>
             </Button>
           )}
+          {/* {(userDetails?.institute_username?.toLowerCase() !== "admin") && (
+            <Button
+              variant={"ghost"}
+              size={"sm"}
+              onPress={() => {
+                popoverTriggerRef.current?.close();
+                handleRemoveAccount();
+              }}
+            >
+              <Text className="native:text-lg text-destructive">
+                Remove Account
+              </Text>
+            </Button>
+          )} */}
           <Separator />
           <Button
             variant={"ghost"}

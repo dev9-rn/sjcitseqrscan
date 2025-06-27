@@ -576,12 +576,12 @@ const ScanHistoryScreen = ({ }: Props) => {
         {TABS.map((tab, index) => (
           <TouchableOpacity
             key={tab.id}
-            className={`flex-1 py-2 ${activeTabIndex == index ? "border-b-2 border-primary" : "border-0"
+            className={`flex-1 py-2 ${activeTabIndex == index ? "border-b-2 border-black" : "border-0"
               } `}
             onPress={() => handleTabSwitch(index)}
           >
             <Text
-              className={`text-center text-base xs:text-lg ${activeTabIndex == index ? "text-primary font-medium" : ""
+              className={`text-center text-base xs:text-lg ${activeTabIndex == index ? "text-black font-medium" : ""
                 }`}
             >
               {tab.name}
@@ -590,7 +590,7 @@ const ScanHistoryScreen = ({ }: Props) => {
         ))}
       </View>
       {isLoading ? (
-        <ActivityIndicator size={"large"} color={'#237fc5'} />
+        <ActivityIndicator size={"large"} color={'#000'} />
       ) : (
         <View style={{ flex: 1 }}>
           <FlatList

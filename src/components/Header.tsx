@@ -25,7 +25,7 @@ const Header = ({ isBackVisible = false, headerTitle, isLogoVisible }: Props) =>
             {isLogoVisible && !headerTitle && (
                 <Image
                     className='size-16'
-                    source={require("@/assets/images/logos/wwe.png")}
+                    source={require("@/assets/images/logos/dypatilLogo.png")}
                     resizeMode='contain'
                 />
             )}
@@ -63,11 +63,11 @@ const Header = ({ isBackVisible = false, headerTitle, isLogoVisible }: Props) =>
                 <View className='flex-row items-center gap-2'>
                     <Image
                         className='size-16'
-                        source={require("@/assets/images/logos/wwe.png")}
+                        source={require("@/assets/images/logos/dypatilLogo.png")}
                         resizeMode='contain'
                     />
                     <View>
-                        <Text className={`text-base xs:text-xl text-black`}>
+                        <Text className={`text-base xs:text-xl text-black text-wrap w-72`}>
                             {TITLES.APP_NAME} SeQR Docs
                         </Text>
                     </View>

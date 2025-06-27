@@ -11,7 +11,7 @@ import { TITLES } from "@/libs/constants";
 
 type Props = {};
 
-const WelcomeScreen = ({}: Props) => {
+const WelcomeScreen = ({ }: Props) => {
   const toast = useToast();
   // const [isConnected, setIsConnected] = useState<boolean | null>(null);
 
@@ -57,7 +57,7 @@ const WelcomeScreen = ({}: Props) => {
   // }
 
   return (
-    <SafeAreaView className="flex-1 bg-blue-50">
+    <SafeAreaView className="flex-1 bg-white">
       <View className="p-4 items-center justify-around flex-1">
         <View>
           <Text className="text-2xl font-semibold">
@@ -69,7 +69,7 @@ const WelcomeScreen = ({}: Props) => {
           <View>
             <Image
               className="size-72"
-              source={require("@/assets/images/logos/wwe.png")}
+              source={require("@/assets/images/logos/playstore.png")}
               resizeMode="cover"
             />
           </View>
@@ -86,12 +86,14 @@ const WelcomeScreen = ({}: Props) => {
 
         <View className="gap-4 w-full">
           <Button
+            // className="bg-black"
             onPress={() => handleLoginWithUserType({ login_type: "verifier" })}
           >
             <Text>Login as verifier</Text>
           </Button>
 
           <Button
+            // className="bg-gray-600"
             variant={"secondary"}
             onPress={() => handleLoginWithUserType({ login_type: "institute" })}
           >
