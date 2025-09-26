@@ -26,7 +26,7 @@ const Header = ({ isBackVisible = false, headerTitle, isLogoVisible }: Props) =>
             {isLogoVisible && !headerTitle && (
                 <Image
                     className='size-16'
-                    source={require("@/assets/images/logos/playstore.jpg")}
+                    source={require("@/assets/images/logos/icon.png")}
                     resizeMode='contain'
                 />
             )}
@@ -64,7 +64,7 @@ const Header = ({ isBackVisible = false, headerTitle, isLogoVisible }: Props) =>
                 <View className='flex-row items-center gap-2'>
                     <Image
                         className='size-16'
-                        source={require("@/assets/images/logos/playstore.jpg")}
+                        source={require("@/assets/images/logos/icon.png")}
                         resizeMode='contain'
                     />
                     <View>

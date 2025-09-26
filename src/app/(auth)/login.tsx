@@ -225,7 +225,7 @@ const LoginScreen = ({ }: Props) => {
                   className="p-0"
                   onPress={() => router.navigate("/sign-up")}
                 >
-                  <Text className="text-primary" style={{ color: '#eeb114' }}>Sign Up</Text>
+                  <Text className="text-primary" >Sign Up</Text>
                 </Button>
               </View>
 
@@ -246,7 +246,7 @@ const LoginScreen = ({ }: Props) => {
         </View>
 
         {/* Submit button */}
-        <Button onPress={handleSubmit(handleUserLogin)} style={{ backgroundColor: '#eeb114' }} disabled={loading}>
+        <Button onPress={handleSubmit(handleUserLogin)} disabled={loading}>
           {loading ? <ActivityIndicator size={'small'} /> : <Text>Login</Text>}
         </Button>
       </View>

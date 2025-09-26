@@ -57,7 +57,7 @@ const HomeScreen = ({}: Props) => {
             <CardContent className="gap-2">
               <ScanQrCode
                 className="text-secondary"
-                style={{ borderColor: "#eeb114" }}
+                // style={{ borderColor: "#eeb114" }}
                 height={"35"}
                 width={"35"}
               />
