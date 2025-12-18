@@ -10,3 +10,9 @@ interface IUserContext {
     userDetails: IUserDetails | undefined;
 
 }
+
+interface IUserTypeContext {
+    setUserType: Dispatch<SetStateAction<IUserDetails>> | undefined;
+    userType: IUserDetails | undefined;
+
+}

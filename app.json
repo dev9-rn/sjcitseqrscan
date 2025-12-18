@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Alard Synergy SeQR Scan",
-    "slug": "alard-seqr-scan",
+    "name": "GHRU Amravati SeQR Scan",
+    "slug": "amravati-seqr-scan",
     "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./src/assets/images/logos/icon.png",
@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.anonymous.alardseqrscan",
+      "bundleIdentifier": "com.anonymous.amravatiseqrscan",
       "entitlements": {
         "com.apple.developer.networking.wifi-info": true
       }
@@ -21,7 +21,7 @@
         "foregroundImage": "./src/assets/images/logos/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.alardseqrscan",
+      "package": "com.anonymous.amravatiseqrscan",
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.READ_EXTERNAL_STORAGE",
@@ -29,7 +29,7 @@
         "android.permission.DOWNLOAD_WITHOUT_NOTIFICATION",
         "android.permission.ACCESS_NETWORK_STATE"
       ],
-      "versionCode": 2
+      "versionCode": 3
     },
     "web": {
       "bundler": "metro",
@@ -66,7 +66,8 @@
         "expo-build-properties",
         {
           "android": {
-            "enableProguardInReleaseBuilds": true
+            "enableProguardInReleaseBuilds": true,
+            "enableMinifyInReleaseBuilds": true
           },
           "ios": {}
         }
@@ -82,9 +83,8 @@
         "origin": false
       },
       "eas": {
-        "projectId": "195790f8-c5a5-4e69-b7d2-56a3ca7fb974"
+        "projectId": "248441ff-746e-4ee1-a0be-6825988c9329"
       }
-    },
-    "owner": "krishnascube"
+    }
   }
 }

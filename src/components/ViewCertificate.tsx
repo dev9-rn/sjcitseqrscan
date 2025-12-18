@@ -57,7 +57,7 @@ const ViewCertificate = ({
           <Text className="text-base xs:text-lg">
             Document ID:{" "}
             <Text className="font-semibold">
-              {scannedResults.serialNo || scannedResults.document_id}
+              {scannedResults.serial_no || scannedResults.document_id || scannedResults.serialNo}
             </Text>
           </Text>
           <Text className="text-base xs:text-lg">

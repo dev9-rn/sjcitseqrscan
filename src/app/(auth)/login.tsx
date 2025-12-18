@@ -20,6 +20,9 @@ import useUser from "@/hooks/useUser";
 import ForgotPasswordDialog from "@/components/ForgotPasswordDialog";
 import { useToast } from "react-native-toast-notifications";
 import ForgotPasswordModal from "@/components/ForgotPasswordModal";
+import { storage } from "@/utils/storageService"; 
+
+
 
 type Props = {};
 
@@ -69,6 +72,11 @@ const LoginScreen = ({ }: Props) => {
     );
     loginBody.append("password", formData.userPass);
     setLoading(true);
+
+
+
+    console.log("Login Type:", login_type);
+
     try {
       const response = await axiosInstance.post(
         login_type.toString().toLocaleLowerCase() != "institute"
@@ -76,6 +84,9 @@ const LoginScreen = ({ }: Props) => {
           : INSTITUE_LOGIN,
         loginBody
       );
+
+      console.log("Login Response:", response.data);
+      console.log("Response Data:", response);
       if (!response.data?.success) {
         if (response.data?.message.length > 50) {
           toast.show(response.data.message, {
@@ -100,6 +111,10 @@ const LoginScreen = ({ }: Props) => {
         response.data?.data?.access_token || response.data?.accesstoken
       );
       setUserDetails(response.data?.data);
+      storage.set(
+        "login_type",
+        login_type.toString().toLowerCase()
+      );
       setIsUserLoggedIn(true);
       router.replace("/home");
     } catch (error) {

@@ -71,6 +71,7 @@ const MenuPopover = ({ }: Props) => {
       }
       toast.show(error?.message);
       storage.clearAll();
+      
       setAuthToken(null);
       setIsUserLoggedIn(false);
       router.replace("/welcome");

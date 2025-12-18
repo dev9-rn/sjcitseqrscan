@@ -6,13 +6,34 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "node": "18.18.0",
+      "env": {
+        "EXPO_USE_YARN": "true"
+      },
+      "hooks": {
+        "preInstall": "corepack enable && corepack prepare yarn@3.6.4 --activate"
+      }
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "node": "18.18.0",
+      "env": {
+        "EXPO_USE_YARN": "true"
+      },
+      "hooks": {
+        "preInstall": "corepack enable && corepack prepare yarn@3.6.4 --activate"
+      }
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "node": "18.18.0",
+      "env": {
+        "EXPO_USE_YARN": "true"
+      },
+      "hooks": {
+        "preInstall": "corepack enable && corepack prepare yarn@3.6.4 --activate"
+      }
     }
   },
   "submit": {

@@ -129,11 +129,15 @@ const ScanHistoryScreen = ({ }: Props) => {
     //@ts-ignore
     // scannedHistoryFormData.append("offset", 5);
 
+    console.log(scannedHistoryFormData, "SCANNED_HISTORY_FORMDATA");
+
     try {
       const response = await axiosInstance.post(
         GET_SCAN_HISTORY,
         scannedHistoryFormData
       );
+
+      console.log(response.data.data, "SCAN_HISTORY_RESPONSE");
 
       if (!response.data?.success) {
         throw new Error(response.data?.data.message || response.data?.message);
@@ -144,7 +148,7 @@ const ScanHistoryScreen = ({ }: Props) => {
 
       for (let i = 0; i < response.data?.data?.length; i++) {
         const item = response.data?.data[i];
-        if (item.scan_result === '1') {
+        if (item.scan_result == "1") {
           if (item.document_id !== null) {
             tempSeQRData.push(item);
           }

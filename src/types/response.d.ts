@@ -46,6 +46,7 @@ interface ITextVerification {
 interface IVerifierCertificate {
     id: number;
     serial_no: string;
+    serialNo: string;
     student_name: string | null;
     certificate_filename: string;
     template_id: number;

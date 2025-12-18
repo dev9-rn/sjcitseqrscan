@@ -25,6 +25,7 @@ import useUser from "@/hooks/useUser";
 import { useToast } from "react-native-toast-notifications";
 import axios from "axios";
 import { useIsFocused } from "@react-navigation/native";
+import { storage } from "@/utils/storageService"; 
 
 type Props = {};
 
@@ -39,6 +40,8 @@ const CameraScreen = ({ }: Props) => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const scanTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const loginType = storage.getString("login_type");
+
 
   // Clean up timeouts on unmount
   useEffect(() => {
@@ -89,14 +92,22 @@ const CameraScreen = ({ }: Props) => {
       scannedFormData.append("user_id", userDetails?.id);
       scannedFormData.append("key", sanitizeBarcodeData);
 
+      console.log("Scanned Form Data:", scannedFormData);
+
+      console.log("loginType: ", loginType);
+
       const response = await axiosInstance.post(
         scanner_type === "code128"
           ? SCAN_AUDIT_TRIALS
-          : userDetails?.user_type === 0
+          : loginType === "verifier"
             ? SCAN_VERIFIER_CERT
             : SCAN_INSTITUTE_CERT,
         scannedFormData
       );
+
+      console.log("Scan Response:", response.data);
+
+      console.log("Response Data:", response);
 
       if (!response.data.success) {
         resetCameraAfterDelay();
