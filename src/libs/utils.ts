@@ -71,6 +71,16 @@ export function cn(...inputs: ClassValue[]) {
 //   return result;
 // }
 
+export const isUpdateRequired = (current, latest) => {
+    const [currentMajor, currentMinor] = current.split('.').map(Number);
+    const [latestMajor, latestMinor] = latest.split('.').map(Number);
+
+    return (
+        currentMajor < latestMajor ||
+        (currentMajor === latestMajor && currentMinor < latestMinor)
+    );
+};
+
 export function parseKeysAndValues(data: string) {
     const values = data.split('|').map(value => value.trim())
     const templateId = values[0]
